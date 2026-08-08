@@ -505,7 +505,7 @@ ReactやCanvasをMVPから導入すると、Railsとは別にフロントエン�
 
 ### 画面遷移図
 
-[画面遷移図（Figma）](https://www.figma.com/design/XOu0IkJpTVf1uMBY7StPPY/Shikisai-~%E6%84%9F%E6%83%85%E3%81%AE%E6%9C%A8~-%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3?timeline=keyframe&node-id=79-1113&t=Dy7OpChmOLD7Sm9Z-0)
+[画面遷移図（Figma）](https://www.figma.com/design/XOu0IkJpTVf1uMBY7StPPY/Shikisai-~%E6%84%9F%E6%83%85%E3%81%AE%E6%9C%A8~-%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3?node-id=2-5&t=3cbIeyRFNEv8o2yx-0)
 
 ### 本サービスの概要（700文字以内）
 
