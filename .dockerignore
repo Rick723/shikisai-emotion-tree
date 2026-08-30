@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+!.env.example
+config/master.key
+config/credentials/*.key
+log/*
+tmp/*
+storage/*
