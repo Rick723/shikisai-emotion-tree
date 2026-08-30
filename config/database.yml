@@ -26,7 +26,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: app_test
+  database: shikisai_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -57,18 +57,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: app_production
+    database: shikisai_production
     username: app
     password: <%= ENV["APP_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: app_production_cache
+    database: shikisai_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: app_production_queue
+    database: shikisai_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: app_production_cable
+    database: shikisai_production_cable
     migrations_paths: db/cable_migrate
