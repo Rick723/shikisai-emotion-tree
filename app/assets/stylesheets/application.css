@@ -8,3 +8,114 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+:root {
+  --color-background: #faf9f5;
+  --color-surface: #fffdf9;
+  --color-text: #343934;
+  --color-text-muted: #737871;
+  --color-primary: #4f7d48;
+  --color-primary-hover: #416a3c;
+  --color-border: #ddd9cf;
+  --color-focus: #668c60;
+
+  --font-serif:
+    Georgia,
+    "Times New Roman",
+    "Yu Mincho",
+    "Hiragino Mincho ProN",
+    serif;
+
+  --font-sans:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Hiragino Sans",
+    "Yu Gothic",
+    "YuGothic",
+    sans-serif;
+
+  --container-width: 1120px;
+  --border-radius: 10px;
+  --transition-base: 180ms ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.7;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: var(--color-primary);
+}
+
+a:focus-visible,
+.button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.container {
+  width: min(calc(100% - 40px), var(--container-width));
+  margin-inline: auto;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 28px;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base);
+}
+
+.button--primary {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.button--primary:hover {
+  background-color: var(--color-primary-hover);
+  color: #fff;
+}
+
+.button--secondary {
+  background-color: transparent;
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+.button--secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
