@@ -1,16 +1,184 @@
 <% content_for :title, "Shikisai 〜感情の木〜" %>
 
-<main class="container">
-  <h1>Shikisai 〜感情の木〜</h1>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <p class="site-brand">
+      <span class="site-brand__name">Shikisai</span>
+      <span class="site-brand__description">〜感情の木〜</span>
+    </p>
 
-  <p>
-    今日の感情を、ひとつの木に残していく。
-  </p>
+    <nav class="site-nav" aria-label="メインナビゲーション">
+      <ul class="site-nav__list">
+        <li><%= link_to "アプリについて", "#about", class: "site-nav__link" %></li>
+        <li><%= link_to "使い方", "#how-to", class: "site-nav__link" %></li>
+      </ul>
+    </nav>
 
-  <%= image_tag "hero_tree.png",
-                alt: "さまざまな色の感情が重なった水彩の木" %>
+    <div class="site-header__actions" role="group" aria-label="アカウントメニュー">
+      <span class="site-header__pending">
+        ログイン
+        <span class="status-label">準備中</span>
+      </span>
+      <button type="button" class="button button--primary button--disabled" disabled>
+        はじめる
+        <span class="button__status">準備中</span>
+      </button>
+    </div>
+  </div>
+</header>
 
-  <%= link_to "共通ボタン表示確認",
-              root_path,
-              class: "button button--primary" %>
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <p class="section-kicker">Shikisai 〜感情の木〜</p>
+        <h1 id="hero-title" class="hero__title">
+          こころの色を、<br>
+          一本の木に。
+        </h1>
+        <p class="hero__description">
+          うれしさも、迷いも、言葉にならない気持ちも。<br>
+          今日の感情を色として木に残し、あなたらしい日々を静かに振り返るアプリです。
+        </p>
+        <div class="hero__actions">
+          <button type="button" class="button button--primary button--large button--disabled" disabled>
+            感情を残してみる
+            <span class="button__status">準備中</span>
+          </button>
+          <%= link_to "使い方を見る", "#how-to", class: "button button--secondary button--large" %>
+        </div>
+      </div>
+
+      <figure class="hero__visual">
+        <%= image_tag "hero_tree.png",
+                      alt: "さまざまな色の葉が重なり合う水彩の木",
+                      width: 1536,
+                      height: 1024,
+                      fetchpriority: "high" %>
+      </figure>
+    </div>
+  </section>
+
+  <section id="about" class="section about" aria-labelledby="about-title">
+    <div class="container about__inner">
+      <div class="about__visual">
+        <%= image_tag "about_app_preview.png",
+                      alt: "一日の感情を色とともに記録するShikisaiの画面イメージ",
+                      width: 1086,
+                      height: 1448,
+                      loading: "lazy" %>
+      </div>
+
+      <div class="about__content">
+        <p class="section-kicker">About Shikisai</p>
+        <h2 id="about-title" class="section-title">どの感情も、あなたを彩る大切な色。</h2>
+        <p>
+          一日の中には、ひとつの言葉だけでは言い表せない、さまざまな感情があります。
+          うれしい気持ちのそばに少しの寂しさがあったり、迷いの中に小さな期待があったりします。
+        </p>
+        <p>
+          Shikisaiは、そんな感情を消したり、良い・悪いと評価したりしません。
+          そのままの色として一本の木へ残し、少しずつ育っていく自分の心を見つめるための場所です。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-to" class="section how-to" aria-labelledby="how-to-title">
+    <div class="container">
+      <div class="section-heading">
+        <p class="section-kicker">How to use</p>
+        <h2 id="how-to-title" class="section-title">感情を残す、３つのステップ</h2>
+        <p class="section-heading__description">
+          そのときの気持ちに向き合いながら、<br class="section-heading__break--desktop">直感的な<br class="section-heading__break--mobile">操作で一本の木へ残していきます。
+        </p>
+      </div>
+
+      <ol class="steps">
+        <li class="step-card">
+          <div class="step-card__visual">
+            <%= image_tag "how_to_emotion_select.png",
+                          alt: "時間帯と、そのときの気持ちに近い感情を選ぶ画面",
+                          width: 1448,
+                          height: 1086,
+                          loading: "lazy" %>
+          </div>
+          <div class="step-card__content">
+            <p class="step-card__number">STEP 1</p>
+            <h3 class="step-card__title">今日の感情を選ぶ</h3>
+            <p>感じた時間を振り返り、そのときの気持ちにいちばん近い感情を選びます。</p>
+          </div>
+        </li>
+
+        <li class="step-card">
+          <div class="step-card__visual">
+            <%= image_tag "how_to_strength_afterglow.png",
+                          alt: "感情の強さと、心に残る余韻を調整する画面",
+                          width: 1088,
+                          height: 1445,
+                          loading: "lazy" %>
+          </div>
+          <div class="step-card__content">
+            <p class="step-card__number">STEP 2</p>
+            <h3 class="step-card__title">強さと余韻を調整する</h3>
+            <p>感情の大きさと、どのくらい心に残っているかを自分の感覚に合わせて整えます。</p>
+          </div>
+        </li>
+
+        <li class="step-card">
+          <div class="step-card__visual">
+            <%= image_tag "how_to_tree_position.png",
+                          alt: "感情を残したい場所を木の中から選ぶ画面",
+                          width: 1122,
+                          height: 1402,
+                          loading: "lazy" %>
+          </div>
+          <div class="step-card__content">
+            <p class="step-card__number">STEP 3</p>
+            <h3 class="step-card__title">木の好きな場所に残す</h3>
+            <p>木の中から好きな場所を選び、今日の感情をひとつの色として残します。</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section closing-cta" aria-labelledby="closing-cta-title">
+    <div class="container">
+      <div class="closing-cta__panel">
+        <p class="section-kicker">A place for every feeling</p>
+        <h2 id="closing-cta-title" class="closing-cta__title">
+          今日のあなたを、<br class="closing-cta__break--desktop">すべて<br class="closing-cta__break--mobile">受け止めてあげよう。
+        </h2>
+        <p class="closing-cta__description">
+          言葉にしきれない気持ちも、色にして残せば、あなたを形づくる大切な一日になります。
+        </p>
+        <button type="button" class="button button--primary button--large button--disabled" disabled>
+          Shikisaiをはじめる
+          <span class="button__status">準備中</span>
+        </button>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <p class="site-brand site-brand--footer">
+        <span class="site-brand__name">Shikisai</span>
+        <span class="site-brand__description">〜感情の木〜</span>
+      </p>
+      <p class="site-footer__message">どの感情にも、居場所を。</p>
+    </div>
+
+    <div class="site-footer__future-links" role="group" aria-label="今後追加予定のご案内">
+      <span>利用規約 <span class="status-label">準備中</span></span>
+      <span>プライバシーポリシー <span class="status-label">準備中</span></span>
+    </div>
+
+    <p class="site-footer__copyright">
+      <small>&copy; <%= Time.current.year %> Shikisai</small>
+    </p>
+  </div>
+</footer>
