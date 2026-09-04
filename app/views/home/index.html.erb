@@ -19,10 +19,10 @@
         ログイン
         <span class="status-label">準備中</span>
       </span>
-      <button type="button" class="button button--primary button--disabled" disabled>
+      <%= link_to new_user_path, class: "button button--primary" do %>
         はじめる
-        <span class="button__status">準備中</span>
-      </button>
+        <span class="button__label">新規登録</span>
+      <% end %>
     </div>
   </div>
 </header>
@@ -41,10 +41,10 @@
           今日の感情を色として木に残し、あなたらしい日々を静かに振り返るアプリです。
         </p>
         <div class="hero__actions">
-          <button type="button" class="button button--primary button--large button--disabled" disabled>
+          <%= link_to new_user_path, class: "button button--primary button--large" do %>
             感情を残してみる
-            <span class="button__status">準備中</span>
-          </button>
+            <span class="button__label">新規登録</span>
+          <% end %>
           <%= link_to "使い方を見る", "#how-to", class: "button button--secondary button--large" %>
         </div>
       </div>
@@ -153,10 +153,10 @@
         <p class="closing-cta__description">
           言葉にしきれない気持ちも、色にして残せば、あなたを形づくる大切な一日になります。
         </p>
-        <button type="button" class="button button--primary button--large button--disabled" disabled>
+        <%= link_to new_user_path, class: "button button--primary button--large" do %>
           Shikisaiをはじめる
-          <span class="button__status">準備中</span>
-        </button>
+          <span class="button__label">新規登録</span>
+        <% end %>
       </div>
     </div>
   </section>

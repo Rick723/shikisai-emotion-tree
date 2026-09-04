@@ -1,0 +1,144 @@
+/* Authentication pages */
+
+.auth-page {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-block: 48px 72px;
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      rgb(255 230 189 / 42%),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 86% 82%,
+      rgb(205 231 216 / 52%),
+      transparent 34%
+    ),
+    var(--color-background);
+}
+
+.auth-page__container {
+  max-width: 600px;
+}
+
+.auth-page__header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.auth-page__back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-panel {
+  margin-top: 16px;
+  padding: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) + 10px);
+  background-color: rgb(255 253 249 / 94%);
+  box-shadow: 0 22px 60px rgb(72 83 66 / 10%);
+}
+
+.auth-panel__heading {
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.auth-panel__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+}
+
+.auth-fields {
+  display: grid;
+  gap: 24px;
+}
+
+.auth-field__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.auth-field__input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.auth-field__input:focus-visible {
+  border-color: var(--color-focus);
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.auth-field__hint {
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.auth-panel__submit {
+  width: 100%;
+  margin-top: 36px;
+}
+
+.auth-panel__submit:disabled {
+  opacity: 0.58;
+}
+
+@media (max-width: 720px) {
+  .auth-page {
+    padding-block: 32px 48px;
+  }
+
+  .auth-page__header {
+    gap: 16px;
+  }
+
+  .auth-page__brand .site-brand__name {
+    font-size: 1.5rem;
+  }
+
+  .auth-panel {
+    margin-top: 12px;
+    padding: 36px 24px;
+  }
+
+  .auth-panel__heading {
+    margin-bottom: 28px;
+  }
+
+  .auth-panel__title {
+    font-size: 1.75rem;
+  }
+
+  .auth-fields {
+    gap: 20px;
+  }
+
+  .auth-panel__submit {
+    margin-top: 28px;
+  }
+}
