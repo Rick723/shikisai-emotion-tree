@@ -213,7 +213,8 @@ a:focus-visible,
 }
 
 .status-label,
-.button__status {
+.button__status,
+.button__label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -230,7 +231,8 @@ a:focus-visible,
   color: #5c625b;
 }
 
-.button__status {
+.button__status,
+.button__label {
   margin-left: 10px;
   padding: 5px 7px;
   border: 1px solid rgb(255 255 255 / 70%);
