@@ -1,0 +1,40 @@
+<% content_for :title, "ログイン | Shikisai 〜感情の木〜" %>
+
+<main class="auth-page">
+  <div class="container auth-page__container">
+    <header class="auth-page__header">
+      <p class="site-brand auth-page__brand">
+        <span class="site-brand__name">Shikisai</span>
+        <span class="site-brand__description">〜感情の木〜</span>
+      </p>
+
+      <%= link_to "← 戻る", root_path, class: "auth-page__back" %>
+    </header>
+
+    <section class="auth-panel" aria-labelledby="login-title">
+      <div class="auth-panel__heading">
+        <p class="section-kicker">Log in</p>
+        <h1 id="login-title" class="auth-panel__title">ログイン</h1>
+      </div>
+
+      <div class="auth-fields">
+        <div class="auth-field">
+          <label for="login-email" class="auth-field__label">メールアドレス</label>
+          <input id="login-email" class="auth-field__input" type="email" autocomplete="email" inputmode="email">
+        </div>
+
+        <div class="auth-field">
+          <label for="login-password" class="auth-field__label">パスワード</label>
+          <input id="login-password" class="auth-field__input" type="password" autocomplete="current-password">
+        </div>
+      </div>
+
+      <button type="button" class="button button--primary button--disabled auth-panel__submit" disabled>
+        ログイン
+      </button>
+      <p class="auth-panel__switch">
+        <%= link_to "新規登録はこちら", new_user_path %>
+      </p>
+    </section>
+  </div>
+</main>

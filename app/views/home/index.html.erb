@@ -15,10 +15,7 @@
     </nav>
 
     <div class="site-header__actions" role="group" aria-label="アカウントメニュー">
-      <span class="site-header__pending">
-        ログイン
-        <span class="status-label">準備中</span>
-      </span>
+      <%= link_to "ログイン", login_path, class: "site-header__pending" %>
       <%= link_to new_user_path, class: "button button--primary" do %>
         はじめる
         <span class="button__label">新規登録</span>
