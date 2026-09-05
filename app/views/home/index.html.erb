@@ -169,10 +169,10 @@
       <p class="site-footer__message">どの感情にも、居場所を。</p>
     </div>
 
-    <div class="site-footer__future-links" role="group" aria-label="今後追加予定のご案内">
-      <span>利用規約 <span class="status-label">準備中</span></span>
-      <span>プライバシーポリシー <span class="status-label">準備中</span></span>
-    </div>
+    <nav class="site-footer__legal-links" aria-label="法的情報">
+      <%= link_to "利用規約", terms_path %>
+      <%= link_to "プライバシーポリシー", privacy_path %>
+    </nav>
 
     <p class="site-footer__copyright">
       <small>&copy; <%= Time.current.year %> Shikisai</small>
