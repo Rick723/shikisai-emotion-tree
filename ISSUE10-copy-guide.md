@@ -355,14 +355,14 @@ PNGはバイナリファイルのため、コードブロックの貼り付け�
 
 コピー元:
 ```text
-C:\Users\rikut\Documents\Codex\2026-09-06\issue-10-shikisai-issue-10-issue\app\assets\images\tree_base.png
+C:\コピー元リポジトリ\app\assets\images\tree_base.png
 ```
 
-Windows PowerShellを使う場合は、`$targetRepo` をコピー先リポジトリの実際の絶対パスに置き換えて実行します。
+Windows PowerShellを使う場合は、`$targetRepo` と `C:\コピー元リポジトリ` を、それぞれ実際のコピー先・コピー元の絶対パスに置き換えて実行します。
 
 ```powershell
 $targetRepo = 'C:\実際のパス\shikisai-emotion-tree'
-Copy-Item -LiteralPath 'C:\Users\rikut\Documents\Codex\2026-09-06\issue-10-shikisai-issue-10-issue\app\assets\images\tree_base.png' -Destination (Join-Path $targetRepo 'app/assets/images/tree_base.png')
+Copy-Item -LiteralPath 'C:\コピー元リポジトリ\app\assets\images\tree_base.png' -Destination (Join-Path $targetRepo 'app/assets/images/tree_base.png')
 ```
 
 ## コピー後の確認
