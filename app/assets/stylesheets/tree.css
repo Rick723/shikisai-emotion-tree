@@ -1,0 +1,154 @@
+/* Tree page: fixed sample only; no record data or interactive drawing. */
+
+.tree-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.tree-page__main {
+  flex: 1;
+  padding-block: 48px 56px;
+}
+
+.tree-page__heading {
+  text-align: center;
+}
+
+.tree-page__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+}
+
+.tree-page__date {
+  margin: 16px 0 0;
+}
+
+.tree-page__notice {
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+.tree-page__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: center;
+  gap: 48px;
+  margin-top: 24px;
+}
+
+.tree-visual {
+  width: min(100%, 640px);
+  margin: 0 auto;
+}
+
+.tree-visual__layers {
+  position: relative;
+}
+
+.tree-visual__base {
+  width: 100%;
+}
+
+/* Five fixed washes, clipped to the base silhouette. Remove in ISSUE 26. */
+.tree-visual__sample-colors {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 24% 23% at 32% 32%, #E6A6B6e6 15%, #E6A6B600 100%),
+    radial-gradient(ellipse 21% 19% at 60% 24%, #FFD89Ab3 15%, #FFD89A00 100%),
+    radial-gradient(ellipse 20% 17% at 70% 48%, #BDE7C5b3 15%, #BDE7C500 100%),
+    radial-gradient(ellipse 12% 11% at 27% 57%, #61749B80 10%, #61749B00 100%),
+    radial-gradient(ellipse 11% 12% at 70% 62%, #8585C766 10%, #8585C700 100%);
+  mask: url("tree_base.png") center / 100% 100% no-repeat;
+}
+
+.tree-legend {
+  padding: 28px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) + 10px);
+  background-color: var(--color-surface);
+}
+
+.tree-legend__title {
+  margin: 0 0 24px;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.tree-legend__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree-legend__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.tree-legend__swatch {
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgb(52 57 52 / 15%);
+  border-radius: 50%;
+}
+
+@media (max-width: 1060px) {
+  .tree-page__content {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 720px) {
+  .tree-page__main {
+    padding-block: 32px;
+  }
+
+  .tree-page__title {
+    font-size: 1.75rem;
+  }
+
+  .tree-page__content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .tree-visual {
+    max-width: 440px;
+  }
+
+  .tree-legend {
+    padding: 24px 12px;
+  }
+
+  .tree-legend__title {
+    text-align: center;
+  }
+
+  .tree-legend__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px 8px;
+  }
+
+  .tree-legend__item {
+    font-size: 0.8125rem;
+  }
+}
