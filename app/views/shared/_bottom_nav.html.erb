@@ -9,14 +9,13 @@
       <% end %>
     </li>
     <li>
-      <span class="bottom-nav__item bottom-nav__item--pending">
+      <%= link_to calendar_path, class: "bottom-nav__item", aria: { current: ("page" if current_page?(calendar_path)) } do %>
         <svg class="bottom-nav__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <rect x="3" y="5" width="18" height="16" rx="2" />
           <path d="M7 3v4m10-4v4M3 11h18m-14 4h2m6 0h2" />
         </svg>
         <span>カレンダー</span>
-        <span class="status-label">準備中</span>
-      </span>
+      <% end %>
     </li>
     <li>
       <%= link_to tree_path, class: "bottom-nav__item", aria: { current: ("page" if current_page?(tree_path)) } do %>
