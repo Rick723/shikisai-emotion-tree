@@ -1,0 +1,67 @@
+<% content_for :title, "木を見る | Shikisai 〜感情の木〜" %>
+
+<div class="tree-page">
+  <main class="container tree-page__main">
+    <header class="tree-page__heading">
+      <h1 class="tree-page__title">木を見る</h1>
+
+      <p class="tree-page__date">
+        <time datetime="2026-07-26">2026年7月26日（日）</time>
+      </p>
+
+      <p class="tree-page__notice">表示サンプル</p>
+    </header>
+
+    <div class="tree-page__content">
+      <figure class="tree-visual">
+        <div
+          class="tree-visual__layers"
+          role="img"
+          aria-label="淡い緑の木に、うれしい・たのしい・感謝・悲しい・不安の5色を重ねた表示サンプル"
+        >
+          <%= image_tag(
+            "tree_base.png",
+            alt: "",
+            class: "tree-visual__base",
+            width: 1254,
+            height: 1254
+          ) %>
+
+          <%# ISSUE 10の固定色。実データではなく、ISSUE 26で実記録の描画へ差し替える。 %>
+          <div class="tree-visual__sample-colors" aria-hidden="true"></div>
+        </div>
+      </figure>
+
+      <section class="tree-legend" aria-labelledby="tree-legend-title">
+        <h2 id="tree-legend-title" class="tree-legend__title">
+          感情の色
+        </h2>
+
+        <%# 静的な凡例。Emotion / EmotionRecord / DBには接続しない。 %>
+        <ul class="tree-legend__list">
+          <% [
+            ["うれしい", "happy"],
+            ["たのしい", "fun"],
+            ["安心した", "relieved"],
+            ["感謝", "grateful"],
+            ["悲しい", "sad"],
+            ["イライラ", "irritated"],
+            ["不安", "anxious"],
+            ["その他", "other"]
+          ].each do |label, emotion| %>
+            <li class="tree-legend__item">
+              <span
+                class="tree-legend__swatch tree-legend__swatch--<%= emotion %>"
+                aria-hidden="true"
+              ></span>
+
+              <span><%= label %></span>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <%= render "shared/bottom_nav" %>
+</div>
