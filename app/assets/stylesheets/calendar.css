@@ -1,0 +1,102 @@
+/* Calendar page: a fixed month and sample colors only. */
+
+.calendar-page__description {
+  margin: 16px 0 0;
+}
+
+.calendar-page__content {
+  max-width: 900px;
+  margin: 32px auto 0;
+}
+
+.calendar-grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+}
+
+.calendar-grid__month {
+  padding-bottom: 24px;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+}
+
+.calendar-grid th,
+.calendar-grid td {
+  border: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.calendar-grid th {
+  padding: 12px 4px;
+  font-weight: 500;
+}
+
+.calendar-grid td {
+  height: 104px;
+  padding: 12px 6px;
+  vertical-align: top;
+}
+
+.calendar-grid__date {
+  display: block;
+}
+
+.calendar-grid__colors {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  min-height: 18px;
+  margin-top: 12px;
+}
+
+.calendar-grid .calendar-grid__swatch {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.calendar-grid__empty {
+  background-color: var(--color-background);
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 24px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.calendar-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 720px) {
+  .calendar-grid th,
+  .calendar-grid td {
+    font-size: 0.8125rem;
+  }
+
+  .calendar-grid td {
+    height: 76px;
+    padding: 10px 4px;
+  }
+
+  .calendar-grid__colors {
+    gap: clamp(1px, 0.8vw, 3px);
+    min-height: 10px;
+    margin-top: 10px;
+  }
+
+  .calendar-grid .calendar-grid__swatch {
+    width: clamp(6px, 2.5vw, 10px);
+    height: clamp(6px, 2.5vw, 10px);
+  }
+}
