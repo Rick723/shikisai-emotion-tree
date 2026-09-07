@@ -1,0 +1,74 @@
+<% content_for :title, "今日を彩る | Shikisai 〜感情の木〜" %>
+
+<div class="tree-page">
+  <main class="container tree-page__main">
+    <header class="tree-page__heading">
+      <h1 class="tree-page__title">今日を彩る</h1>
+      <p>いま感じている気持ちを、一つ選んでみましょう。</p>
+      <p class="tree-page__notice">入力を試せる表示サンプルです。入力内容は保存されません。</p>
+    </header>
+
+    <div class="emotion-form-page__content">
+      <figure class="tree-visual">
+        <%= render "shared/tree_base", alt: "淡い緑の基礎木" %>
+        <figcaption class="auth-field__hint emotion-form-page__caption">
+          基礎木の表示サンプルです。選んだ感情は木に反映されません。
+        </figcaption>
+      </figure>
+
+      <%# 静的入力のみ。form・送信ボタンを置かず、保存リクエストを発生させない。 %>
+      <div class="emotion-form">
+        <fieldset class="emotion-form__emotions">
+          <legend class="auth-field__label">感情の種類</legend>
+
+          <div class="emotion-form__choices">
+            <% [
+              ["うれしい", "happy"],
+              ["たのしい", "fun"],
+              ["安心した", "relieved"],
+              ["感謝", "grateful"],
+              ["悲しい", "sad"],
+              ["イライラ", "irritated"],
+              ["不安", "anxious"],
+              ["その他", "other"]
+            ].each do |label, emotion| %>
+              <label class="emotion-form__choice">
+                <input type="radio" name="emotion" value="<%= emotion %>">
+                <span class="tree-legend__swatch tree-legend__swatch--<%= emotion %>" aria-hidden="true"></span>
+                <span><%= label %></span>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="emotion-strength" class="auth-field__label">感情の強さ</label>
+          <input id="emotion-strength" class="emotion-form__range" type="range" min="0" max="100" step="1" value="50" aria-describedby="emotion-strength-hint">
+          <div class="emotion-form__range-labels" aria-hidden="true">
+            <span>弱い</span>
+            <span>強い</span>
+          </div>
+          <p id="emotion-strength-hint" class="auth-field__hint">どのくらい強く感じましたか？</p>
+        </div>
+
+        <div>
+          <label for="emotion-afterglow" class="auth-field__label">感情の余韻</label>
+          <input id="emotion-afterglow" class="emotion-form__range" type="range" min="0" max="100" step="1" value="50" aria-describedby="emotion-afterglow-hint">
+          <div class="emotion-form__range-labels" aria-hidden="true">
+            <span>ほのか</span>
+            <span>くっきり</span>
+          </div>
+          <p id="emotion-afterglow-hint" class="auth-field__hint">いま、どのくらい気持ちが残っていますか？</p>
+        </div>
+
+        <div>
+          <label for="emotion-memo" class="auth-field__label">メモ（任意）</label>
+          <textarea id="emotion-memo" class="auth-field__input emotion-form__memo" rows="4" maxlength="200" aria-describedby="emotion-memo-hint"></textarea>
+          <p id="emotion-memo-hint" class="auth-field__hint">200文字以内</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%= render "shared/bottom_nav" %>
+</div>

@@ -18,4 +18,5 @@ Rails.application.routes.draw do
   get "tree" => "trees#show", as: :tree
 
   resources :users, only: :new
+  resources :emotion_records, only: :new
 end
