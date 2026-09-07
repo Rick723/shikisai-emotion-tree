@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get "privacy" => "legal#privacy", as: :privacy
   get "tree" => "trees#show", as: :tree
   get "calendar" => "calendars#show", as: :calendar
+  get "mypage" => "mypages#show", as: :mypage
 
   resources :users, only: :new
   resources :emotion_records, only: :new
