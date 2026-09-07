@@ -8,7 +8,7 @@
         <span class="site-brand__description">〜感情の木〜</span>
       </p>
 
-      <%= link_to "← 戻る", root_path, class: "legal-page__back" %>
+      <%= link_to "← 戻る", (params[:from] == "mypage" ? mypage_path : root_path), class: "legal-page__back" %>
     </header>
 
     <article class="legal-document" aria-labelledby="privacy-title">
