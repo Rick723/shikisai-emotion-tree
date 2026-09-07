@@ -1,13 +1,12 @@
 <nav class="bottom-nav" aria-label="メインナビゲーション">
   <ul class="container bottom-nav__list">
     <li>
-      <span class="bottom-nav__item bottom-nav__item--pending">
+      <%= link_to new_emotion_record_path, class: "bottom-nav__item", aria: { current: ("page" if current_page?(new_emotion_record_path)) } do %>
         <svg class="bottom-nav__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="m14 5 5 5M4 20l5-1L21 7l-4-4L5 15Z" />
         </svg>
         <span>今日を彩る</span>
-        <span class="status-label">準備中</span>
-      </span>
+      <% end %>
     </li>
     <li>
       <%= link_to calendar_path, class: "bottom-nav__item", aria: { current: ("page" if current_page?(calendar_path)) } do %>

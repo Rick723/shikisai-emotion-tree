@@ -19,4 +19,5 @@ Rails.application.routes.draw do
   get "calendar" => "calendars#show", as: :calendar
 
   resources :users, only: :new
+  resources :emotion_records, only: :new
 end
