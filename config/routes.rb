@@ -16,8 +16,6 @@ Rails.application.routes.draw do
   get "terms" => "legal#terms", as: :terms
   get "privacy" => "legal#privacy", as: :privacy
   get "tree" => "trees#show", as: :tree
-  get "calendar" => "calendars#show", as: :calendar
 
   resources :users, only: :new
-  resources :emotion_records, only: :new
 end

@@ -19,7 +19,13 @@
           role="img"
           aria-label="淡い緑の木に、うれしい・たのしい・感謝・悲しい・不安の5色を重ねた表示サンプル"
         >
-          <%= render "shared/tree_base", alt: "" %>
+          <%= image_tag(
+            "tree_base.png",
+            alt: "",
+            class: "tree-visual__base",
+            width: 1254,
+            height: 1254
+          ) %>
 
           <%# ISSUE 10の固定色。実データではなく、ISSUE 26で実記録の描画へ差し替える。 %>
           <div class="tree-visual__sample-colors" aria-hidden="true"></div>
