@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   root "home#index"
 
   get "login" => "sessions#new", as: :login
+  post "login" => "sessions#create"
   get "terms" => "legal#terms", as: :terms
   get "privacy" => "legal#privacy", as: :privacy
   get "tree" => "trees#show", as: :tree

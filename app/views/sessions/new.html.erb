@@ -17,21 +17,25 @@
         <h1 id="login-title" class="auth-panel__title">ログイン</h1>
       </div>
 
-      <div class="auth-fields">
-        <div class="auth-field">
-          <label for="login-email" class="auth-field__label">メールアドレス</label>
-          <input id="login-email" class="auth-field__input" type="email" autocomplete="email" inputmode="email">
+      <% if @authentication_error %>
+        <p role="alert"><%= @authentication_error %></p>
+      <% end %>
+
+      <%= form_with url: login_path, scope: :session do |form| %>
+        <div class="auth-fields">
+          <div class="auth-field">
+            <%= form.label :email, "メールアドレス", for: "login-email", class: "auth-field__label" %>
+            <%= form.email_field :email, value: @email, id: "login-email", class: "auth-field__input", autocomplete: "email", inputmode: "email", required: true %>
+          </div>
+
+          <div class="auth-field">
+            <%= form.label :password, "パスワード", for: "login-password", class: "auth-field__label" %>
+            <%= form.password_field :password, id: "login-password", class: "auth-field__input", autocomplete: "current-password", required: true %>
+          </div>
         </div>
 
-        <div class="auth-field">
-          <label for="login-password" class="auth-field__label">パスワード</label>
-          <input id="login-password" class="auth-field__input" type="password" autocomplete="current-password">
-        </div>
-      </div>
-
-      <button type="button" class="button button--primary button--disabled auth-panel__submit" disabled>
-        ログイン
-      </button>
+        <%= form.submit "ログイン", class: "button button--primary auth-panel__submit" %>
+      <% end %>
       <p class="auth-panel__switch">
         <%= link_to "新規登録はこちら", new_user_path %>
       </p>
