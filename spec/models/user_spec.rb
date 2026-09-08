@@ -1,11 +1,6 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  # Model behavior is independent of the Japanese translations added separately.
-  before do
-    allow(I18n.config).to receive(:locale).and_return(:en)
-  end
-
   describe "factory" do
     it "builds and saves a valid user" do
       user = build(:user)
