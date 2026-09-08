@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe Emotion, type: :model do
   describe "validations" do
     it "saves a valid emotion" do
-      emotion = described_class.new(name: "happy", color_code: "#E6A6B6", display_order: 1)
+      emotion = described_class.new(name: "test_emotion", color_code: "#E6A6B6", display_order: 100)
 
       expect(emotion.save).to be true
-      expect(emotion.reload).to have_attributes(name: "happy", color_code: "#E6A6B6", display_order: 1)
+      expect(emotion.reload).to have_attributes(name: "test_emotion", color_code: "#E6A6B6", display_order: 100)
     end
 
     it "requires name, color_code and display_order" do
@@ -19,7 +19,7 @@ RSpec.describe Emotion, type: :model do
     end
 
     it "accepts lowercase names with underscores between words and up to 30 characters" do
-      ["happy", "very_happy", "a" * 30].each do |name|
+      ["calm", "very_happy", "a" * 30].each do |name|
         expect(build(:emotion, name: name)).to be_valid
       end
     end
