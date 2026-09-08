@@ -4,6 +4,9 @@
   <main class="container tree-page__main">
     <header class="tree-page__heading">
       <h1 class="tree-page__title">今日を彩る</h1>
+      <p class="tree-page__date">
+        <%= time_tag @today, l(@today, format: "%Y年%-m月%-d日") %>
+      </p>
       <p>いま感じている気持ちを、一つ選んでみましょう。</p>
       <p class="tree-page__notice">入力を試せる表示サンプルです。入力内容は保存されません。</p>
     </header>
@@ -16,26 +19,17 @@
         </figcaption>
       </figure>
 
-      <%# 静的入力のみ。form・送信ボタンを置かず、保存リクエストを発生させない。 %>
-      <div class="emotion-form">
+      <%# 入力状態のみを扱う。form・送信ボタンを置かず、保存リクエストを発生させない。 %>
+      <div class="emotion-form" data-controller="emotion-input">
         <fieldset class="emotion-form__emotions">
           <legend class="auth-field__label">感情の種類</legend>
 
           <div class="emotion-form__choices">
-            <% [
-              ["うれしい", "happy"],
-              ["たのしい", "fun"],
-              ["安心した", "relieved"],
-              ["感謝", "grateful"],
-              ["悲しい", "sad"],
-              ["イライラ", "irritated"],
-              ["不安", "anxious"],
-              ["その他", "other"]
-            ].each do |label, emotion| %>
+            <% @emotions.each do |emotion| %>
               <label class="emotion-form__choice">
-                <input type="radio" name="emotion" value="<%= emotion %>">
-                <span class="tree-legend__swatch tree-legend__swatch--<%= emotion %>" aria-hidden="true"></span>
-                <span><%= label %></span>
+                <input type="radio" name="emotion" value="<%= emotion.id %>">
+                <span class="tree-legend__swatch" style="background-color: <%= emotion.color_code %>" aria-hidden="true"></span>
+                <span><%= t("emotions.#{emotion.name}") %></span>
               </label>
             <% end %>
           </div>
@@ -43,22 +37,24 @@
 
         <div>
           <label for="emotion-strength" class="auth-field__label">感情の強さ</label>
-          <input id="emotion-strength" class="emotion-form__range" type="range" min="0" max="100" step="1" value="50" aria-describedby="emotion-strength-hint">
+          <input id="emotion-strength" class="emotion-form__range" type="range" min="0" max="100" step="1" value="50" aria-describedby="emotion-strength-hint" data-emotion-input-target="strength" data-action="input->emotion-input#updateStrength">
           <div class="emotion-form__range-labels" aria-hidden="true">
             <span>弱い</span>
             <span>強い</span>
           </div>
           <p id="emotion-strength-hint" class="auth-field__hint">どのくらい強く感じましたか？</p>
+          <p class="auth-field__hint">現在の強さ：<output for="emotion-strength" data-emotion-input-target="strengthValue">50</output> / 100</p>
         </div>
 
         <div>
           <label for="emotion-afterglow" class="auth-field__label">感情の余韻</label>
-          <input id="emotion-afterglow" class="emotion-form__range" type="range" min="0" max="100" step="1" value="50" aria-describedby="emotion-afterglow-hint">
+          <input id="emotion-afterglow" class="emotion-form__range" type="range" min="0" max="100" step="1" value="50" aria-describedby="emotion-afterglow-hint" data-emotion-input-target="afterglow" data-action="input->emotion-input#updateAfterglow">
           <div class="emotion-form__range-labels" aria-hidden="true">
             <span>ほのか</span>
             <span>くっきり</span>
           </div>
           <p id="emotion-afterglow-hint" class="auth-field__hint">いま、どのくらい気持ちが残っていますか？</p>
+          <p class="auth-field__hint">現在の余韻：<output for="emotion-afterglow" data-emotion-input-target="afterglowValue">50</output> / 100</p>
         </div>
 
         <div>
