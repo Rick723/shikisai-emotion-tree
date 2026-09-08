@@ -17,37 +17,47 @@
         <h1 id="signup-title" class="auth-panel__title">新規登録</h1>
       </div>
 
-      <div class="auth-fields">
-        <div class="auth-field">
-          <label for="user-name" class="auth-field__label">ユーザー名</label>
-          <input id="user-name" class="auth-field__input" type="text" maxlength="20">
-          <p class="auth-field__hint">20文字以内</p>
+      <% if @user.errors.any? %>
+        <div role="alert">
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with model: @user do |form| %>
+        <div class="auth-fields">
+          <div class="auth-field">
+            <%= form.label :name, "ユーザー名", for: "user-name", class: "auth-field__label" %>
+            <%= form.text_field :name, id: "user-name", class: "auth-field__input", maxlength: 20, required: true %>
+            <p class="auth-field__hint">20文字以内</p>
+          </div>
+
+          <div class="auth-field">
+            <%= form.label :email, "メールアドレス", for: "user-email", class: "auth-field__label" %>
+            <%= form.email_field :email, id: "user-email", class: "auth-field__input", autocomplete: "email", inputmode: "email", required: true %>
+          </div>
+
+          <div class="auth-field">
+            <%= form.label :password, "パスワード", for: "user-password", class: "auth-field__label" %>
+            <%= form.password_field :password, id: "user-password", class: "auth-field__input", autocomplete: "new-password", required: true %>
+            <p class="auth-field__hint">8文字以上</p>
+          </div>
+
+          <div class="auth-field">
+            <%= form.label :password_confirmation, "パスワード（確認）", for: "user-password-confirmation", class: "auth-field__label" %>
+            <%= form.password_field :password_confirmation, id: "user-password-confirmation", class: "auth-field__input", autocomplete: "new-password", required: true %>
+          </div>
         </div>
 
-        <div class="auth-field">
-          <label for="user-email" class="auth-field__label">メールアドレス</label>
-          <input id="user-email" class="auth-field__input" type="email" autocomplete="email" inputmode="email">
-        </div>
+        <p class="auth-panel__switch">
+          登録前に、<%= link_to "利用規約", terms_path %>と<%= link_to "プライバシーポリシー", privacy_path %>をご確認ください。
+        </p>
 
-        <div class="auth-field">
-          <label for="user-password" class="auth-field__label">パスワード</label>
-          <input id="user-password" class="auth-field__input" type="password" autocomplete="new-password">
-          <p class="auth-field__hint">8文字以上</p>
-        </div>
-
-        <div class="auth-field">
-          <label for="user-password-confirmation" class="auth-field__label">パスワード（確認）</label>
-          <input id="user-password-confirmation" class="auth-field__input" type="password" autocomplete="new-password">
-        </div>
-      </div>
-
-      <p class="auth-panel__switch">
-        登録前に、<%= link_to "利用規約", terms_path %>と<%= link_to "プライバシーポリシー", privacy_path %>をご確認ください。
-      </p>
-
-      <button type="button" class="button button--primary button--disabled auth-panel__submit" disabled>
-        登録する
-      </button>
+        <%= form.submit "登録する", class: "button button--primary auth-panel__submit" %>
+      <% end %>
       <p class="auth-panel__switch">
         <%= link_to "ログインはこちら", login_path %>
       </p>
