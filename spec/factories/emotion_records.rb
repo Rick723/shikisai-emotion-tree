@@ -7,5 +7,7 @@ FactoryBot.define do
     position_x { 50.0 }
     position_y { 50.0 }
     felt_on { Date.current }
+    felt_at { nil }
+    memo { nil }
   end
 end
