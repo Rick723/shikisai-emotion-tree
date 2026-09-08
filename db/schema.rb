@@ -11,6 +11,17 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.1].define(version: 2026_09_08_000001) do
+  create_table "emotions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "color_code", limit: 7, null: false
+    t.datetime "created_at", null: false
+    t.integer "display_order", null: false
+    t.string "name", limit: 30, null: false
+    t.datetime "updated_at", null: false
+    t.index ["display_order"], name: "index_emotions_on_display_order", unique: true
+    t.index ["name"], name: "index_emotions_on_name", unique: true
+    t.check_constraint "`display_order` >= 1", name: "chk_emotions_display_order_positive"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
