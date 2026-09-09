@@ -29,6 +29,7 @@ RSpec.describe "Emotion input", type: :request do
     expect(choices.size).to eq(8)
     Emotion.order(:display_order).zip(choices).each do |emotion, choice|
       expect(choice.at_css('input[type="radio"]')["value"]).to eq(emotion.id.to_s)
+      expect(choice.at_css("input")["data-emotion-color"]).to eq(emotion.color_code)
       expect(choice.text.strip).to eq(I18n.t("emotions.#{emotion.name}", raise: true))
       expect(choice.at_css(".tree-legend__swatch")["style"]).to eq("background-color: #{emotion.color_code}")
     end
@@ -46,6 +47,7 @@ RSpec.describe "Emotion input", type: :request do
     choices = response.parsed_body.css(".emotion-form__choice")
     expect(choices.first.at_css("input")["value"]).to eq(Emotion.find_by!(name: "fun").id.to_s)
     expect(choices.last.at_css("input")["value"]).to eq(emotion.id.to_s)
+    expect(choices.last.at_css("input")["data-emotion-color"]).to eq("#123456")
     expect(choices.last.at_css(".tree-legend__swatch")["style"]).to eq("background-color: #123456")
     expect(choices.last.text.strip).to eq("その他")
   end

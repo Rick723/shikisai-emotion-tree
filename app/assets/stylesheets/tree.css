@@ -1,4 +1,4 @@
-/* Tree page: fixed sample only; no record data or interactive drawing. */
+/* Shared tree layout and the tree page's fixed sample colors. */
 
 .tree-page {
   display: flex;
