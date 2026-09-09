@@ -22,13 +22,12 @@
 
     <dialog id="logout-confirmation" class="logout-dialog" aria-labelledby="logout-confirmation-title" aria-describedby="logout-confirmation-description" data-logout-confirmation-target="dialog" data-action="close->logout-confirmation#restoreFocus">
       <h2 id="logout-confirmation-title" class="logout-dialog__title">ログアウトしますか？</h2>
-      <p id="logout-confirmation-description" class="logout-dialog__description">ログアウト機能は準備中です。現在はログアウトできません。</p>
+      <p id="logout-confirmation-description" class="logout-dialog__description">ログアウトすると、TOPページに戻ります。</p>
 
-      <div class="logout-dialog__actions">
+      <%= form_with url: logout_path, method: :delete, class: "logout-dialog__actions" do %>
         <button type="button" class="button button--secondary" data-action="logout-confirmation#close" autofocus>キャンセル</button>
-        <%# 実ログアウト処理はISSUE 20で接続する。ここでは送信・画面遷移を行わない。 %>
-        <button type="button" class="button button--primary button--disabled" disabled>ログアウト</button>
-      </div>
+        <button type="submit" class="button button--primary">ログアウト</button>
+      <% end %>
     </dialog>
   </main>
 

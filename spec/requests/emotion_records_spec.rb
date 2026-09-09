@@ -4,6 +4,9 @@ RSpec.describe "Emotion input", type: :request do
   include ActiveSupport::Testing::TimeHelpers
 
   before do
+    user = create(:user)
+    post login_path, params: { session: { email: user.email, password: user.password } }
+
     Emotion.delete_all
     Rails.application.load_seed
   end
