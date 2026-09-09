@@ -5,16 +5,16 @@
     <header class="tree-page__heading">
       <h1 class="tree-page__title">カレンダー</h1>
       <p id="calendar-description" class="calendar-page__description">一日ごとの感情を、色で振り返る。</p>
-      <p class="tree-page__notice">表示サンプル</p>
+      <p class="tree-page__notice">感情の色は表示サンプルです。実際の記録はまだ反映されません。</p>
     </header>
 
-    <%# ISSUE 12の固定サンプル。日付計算・実記録の取得や集計は行わない。 %>
+    <%# 感情の色はISSUE 12の固定サンプル。実記録の日別集計・色表示はISSUE 29で対応する。 %>
     <% emotion_labels = { "happy" => "うれしい", "fun" => "たのしい", "grateful" => "感謝" } %>
     <% sample_days = { 5 => %w[happy], 12 => %w[fun grateful], 19 => %w[happy fun grateful] } %>
 
     <div class="calendar-page__content">
       <table class="calendar-grid" aria-describedby="calendar-description">
-        <caption class="calendar-grid__month"><time datetime="2026-07">2026年7月</time></caption>
+        <caption class="calendar-grid__month"><time datetime="<%= @month.strftime("%Y-%m") %>"><%= l(@month, format: "%Y年%-m月") %></time></caption>
         <thead>
           <tr>
             <% %w[日 月 火 水 木 金 土].each do |weekday| %>
@@ -23,13 +23,15 @@
           </tr>
         </thead>
         <tbody>
-          <% [nil, nil, nil, *(1..31), nil].each_slice(7) do |week| %>
+          <% dates = Array.new(@month.wday) + (@month..@month.end_of_month).to_a %>
+          <% dates.concat(Array.new((7 - dates.size % 7) % 7)) %>
+          <% dates.each_slice(7) do |week| %>
             <tr>
               <% week.each do |day| %>
                 <% if day %>
-                  <% emotions = sample_days.fetch(day, []) %>
+                  <% emotions = sample_days.fetch(day.day, []) %>
                   <td>
-                    <time class="calendar-grid__date" datetime="2026-07-<%= "%02d" % day %>"><%= day %></time>
+                    <%= time_tag day, day.day, class: "calendar-grid__date" %>
                     <span
                       class="calendar-grid__colors"
                       role="img"
