@@ -1,4 +1,4 @@
-/* Static emotion input; native controls only, without saving or tree updates. */
+/* Emotion input and temporary tree preview, without saving. */
 
 .emotion-form-page__content {
   display: grid;
@@ -10,6 +10,29 @@
 
 .emotion-form-page__caption {
   text-align: center;
+}
+
+.emotion-form-page__tree {
+  cursor: crosshair;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.emotion-form-page__tree .tree-visual__base {
+  pointer-events: none;
+}
+
+.emotion-form-page__preview {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse var(--preview-radius) var(--preview-radius) at var(--preview-x) var(--preview-y),
+    var(--preview-color) 15%,
+    transparent 100%
+  );
+  opacity: var(--preview-opacity);
+  mask: url("tree_base.png") center / 100% 100% no-repeat;
 }
 
 .emotion-form {
