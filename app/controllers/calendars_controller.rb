@@ -7,6 +7,8 @@ class CalendarsController < ApplicationController
       .where(felt_on: @month..@month.end_of_month)
       .includes(:emotion)
       .load
+    @daily_emotions = daily_emotions(@emotion_records)
+    @emotions = Emotion.order(:display_order)
   end
 
   private
@@ -20,5 +22,17 @@ class CalendarsController < ApplicationController
     month.year.positive? && month <= current_month ? month : current_month
   rescue Date::Error
     current_month
+  end
+
+  def daily_emotions(records)
+    records.group_by(&:felt_on).transform_values do |daily_records|
+      daily_records
+        .group_by(&:emotion_id)
+        .values
+        .map { |emotion_records| emotion_records.max_by(&:strength) }
+        .sort_by { |record| [-record.strength, record.emotion.display_order] }
+        .first(3)
+        .map(&:emotion)
+    end
   end
 end
