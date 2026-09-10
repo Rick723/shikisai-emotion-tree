@@ -12,6 +12,7 @@ export default class extends Controller {
   static values = { today: String }
 
   connect() {
+    this.restorePosition()
     this.updateStrength()
     this.updateAfterglow()
   }
@@ -28,6 +29,18 @@ export default class extends Controller {
   updateAfterglow() {
     this.afterglowValueTarget.value = this.afterglowTarget.value
     this.updatePreview()
+  }
+
+  restorePosition() {
+    const positionX = this.positionXTarget.value.trim()
+    const positionY = this.positionYTarget.value.trim()
+    if (positionX === "" || positionY === "") return
+
+    const x = Number(positionX)
+    const y = Number(positionY)
+    if (![x, y].every(value => Number.isFinite(value) && value >= 0 && value <= 100)) return
+
+    this.position = { position_x: x, position_y: y }
   }
 
   selectPosition(event) {

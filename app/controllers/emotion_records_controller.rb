@@ -15,7 +15,9 @@ class EmotionRecordsController < ApplicationController
     if @emotion_record.save
       redirect_to tree_path, status: :see_other
     else
-      head :unprocessable_entity
+      @today = Date.current
+      @emotions = Emotion.order(:display_order)
+      render :new, status: :unprocessable_content
     end
   end
 

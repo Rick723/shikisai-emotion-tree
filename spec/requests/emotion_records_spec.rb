@@ -52,6 +52,10 @@ RSpec.describe "Emotion input", type: :request do
     expect(controller_scope.at_css('textarea[name="emotion_record[memo]"][data-emotion-input-target="memo"]')).to be_present
     expect(controller_scope.at_css('input[name="emotion_record[position_x]"][data-emotion-input-target="positionX"]')).to be_present
     expect(controller_scope.at_css('input[name="emotion_record[position_y]"][data-emotion-input-target="positionY"]')).to be_present
+    expect(controller_scope.at_css('input[name="emotion_record[strength]"]')["value"]).to eq("50")
+    expect(controller_scope.at_css('output[data-emotion-input-target="strengthValue"]').text).to eq("50")
+    expect(controller_scope.at_css('input[name="emotion_record[afterglow]"]')["value"]).to eq("50")
+    expect(controller_scope.at_css('output[data-emotion-input-target="afterglowValue"]').text).to eq("50")
     expect(confirmation_button.text.strip).to eq("この位置で確認する")
     expect(confirmation_button["type"]).to eq("button")
     expect(confirmation_button["disabled"]).to eq("")
@@ -113,6 +117,102 @@ RSpec.describe "Emotion input", type: :request do
     end.to change(user.emotion_records, :count).by(2)
 
     expect(user.emotion_records.order(:id).last(2).map(&:felt_on)).to all(eq(Date.current))
+  end
+
+  it "renders validation errors with 422 and retains the submitted values" do
+    emotion = Emotion.order(:display_order).first
+    attributes = {
+      emotion_id: emotion.id,
+      strength: 72,
+      afterglow: 64,
+      position_x: 38.25,
+      position_y: 41.75,
+      felt_at: "13:45",
+      memo: "あ" * 201
+    }
+
+    expect do
+      post emotion_records_path, params: { emotion_record: attributes }
+    end.not_to change(user.emotion_records, :count)
+
+    expect(response).to have_http_status(422)
+    page = response.parsed_body
+    form = page.at_css('form[action="/emotion_records"][method="post"]')
+    expect(page.at_css("h1").text).to eq("今日を彩る")
+    expect(page.at_css('[role="alert"]').text).to include("メモ は200文字以内で入力してください")
+    expect(form.at_css("input[name='emotion_record[emotion_id]'][value='#{emotion.id}']")["checked"]).to eq("checked")
+    expect(form.at_css('input[name="emotion_record[strength]"]')["value"]).to eq("72")
+    expect(form.at_css('output[data-emotion-input-target="strengthValue"]').text).to eq("72")
+    expect(form.at_css('input[name="emotion_record[afterglow]"]')["value"]).to eq("64")
+    expect(form.at_css('output[data-emotion-input-target="afterglowValue"]').text).to eq("64")
+    expect(form.at_css('input[name="emotion_record[position_x]"]')["value"]).to eq("38.25")
+    expect(form.at_css('input[name="emotion_record[position_y]"]')["value"]).to eq("41.75")
+    expect(form.at_css('input[name="emotion_record[felt_at]"]')["value"]).to start_with("13:45")
+    expect(form.at_css('textarea[name="emotion_record[memo]"]').text).to eq(attributes[:memo])
+  end
+
+  it "ignores submitted user_id and felt_on values" do
+    emotion = Emotion.order(:display_order).first
+    other_user = create(:user)
+
+    travel_to Time.zone.local(2026, 9, 10, 14, 0, 0) do
+      expect do
+        post emotion_records_path, params: {
+          emotion_record: {
+            emotion_id: emotion.id,
+            user_id: other_user.id,
+            strength: 50,
+            afterglow: 50,
+            position_x: 40,
+            position_y: 40,
+            felt_on: "2020-01-01"
+          }
+        }
+      end.to change(user.emotion_records, :count).by(1)
+
+      record = EmotionRecord.order(:id).last
+      expect(record.user).to eq(user)
+      expect(record.felt_on).to eq(Date.new(2026, 9, 10))
+    end
+  end
+
+  it "does not save an invalid emotion_id and re-renders the form without a server error" do
+    expect do
+      post emotion_records_path, params: {
+        emotion_record: {
+          emotion_id: 999_999_999,
+          strength: 50,
+          afterglow: 50,
+          position_x: 40,
+          position_y: 40
+        }
+      }
+    end.not_to change(user.emotion_records, :count)
+
+    expect(response).to have_http_status(422)
+    expect(response.parsed_body.at_css('[role="alert"]').text).to include("感情の種類 を選択してください")
+    expect(response.parsed_body.at_css('form[action="/emotion_records"][method="post"]')).to be_present
+  end
+
+  it "retains invalid position values without restoring them as a valid preview position" do
+    emotion = Emotion.order(:display_order).first
+
+    expect do
+      post emotion_records_path, params: {
+        emotion_record: {
+          emotion_id: emotion.id,
+          strength: 50,
+          afterglow: 50,
+          position_x: "not-a-number",
+          position_y: 101
+        }
+      }
+    end.not_to change(user.emotion_records, :count)
+
+    expect(response).to have_http_status(422)
+    form = response.parsed_body.at_css('form[action="/emotion_records"][method="post"]')
+    expect(form.at_css('input[name="emotion_record[position_x]"]')["value"]).to eq("not-a-number")
+    expect(form.at_css('input[name="emotion_record[position_y]"]')["value"]).to eq("101")
   end
 
   it "reflects changes to stored names, colors and display order instead of fixed view values" do
