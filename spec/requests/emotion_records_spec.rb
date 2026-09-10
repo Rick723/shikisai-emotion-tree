@@ -3,8 +3,9 @@ require "rails_helper"
 RSpec.describe "Emotion input", type: :request do
   include ActiveSupport::Testing::TimeHelpers
 
+  let(:user) { create(:user) }
+
   before do
-    user = create(:user)
     post login_path, params: { session: { email: user.email, password: user.password } }
 
     Emotion.delete_all
@@ -36,7 +37,7 @@ RSpec.describe "Emotion input", type: :request do
     end
   end
 
-  it "renders a non-submitting confirmation dialog for the current input and placement" do
+  it "renders a form with a non-submitting preview button and a submitting confirmation button" do
     get new_emotion_record_path
 
     page = response.parsed_body
@@ -45,15 +46,73 @@ RSpec.describe "Emotion input", type: :request do
     confirmation_button = controller_scope.at_css('button[data-action="emotion-input#openConfirmation"]')
 
     expect(controller_scope["data-emotion-input-today-value"]).to eq(I18n.l(Date.current, format: "%Y年%-m月%-d日"))
-    expect(controller_scope.at_css('textarea[data-emotion-input-target="memo"]')).to be_present
+    expect(controller_scope.name).to eq("form")
+    expect(controller_scope["action"]).to eq(emotion_records_path)
+    expect(controller_scope["method"]).to eq("post")
+    expect(controller_scope.at_css('textarea[name="emotion_record[memo]"][data-emotion-input-target="memo"]')).to be_present
+    expect(controller_scope.at_css('input[name="emotion_record[position_x]"][data-emotion-input-target="positionX"]')).to be_present
+    expect(controller_scope.at_css('input[name="emotion_record[position_y]"][data-emotion-input-target="positionY"]')).to be_present
     expect(confirmation_button.text.strip).to eq("この位置で確認する")
     expect(confirmation_button["type"]).to eq("button")
     expect(confirmation_button["disabled"]).to eq("")
     expect(dialog).to be_present
-    expect(dialog.at_css('input[type="time"][data-emotion-input-target="feltAt"]')).to be_present
+    expect(dialog.at_css('input[type="time"][name="emotion_record[felt_at]"][data-emotion-input-target="feltAt"]')).to be_present
     expect(dialog.at_css('button[type="button"][data-action="emotion-input#back"]')&.text&.strip).to eq("戻る")
-    expect(dialog.at_css('button[type="button"][data-action="emotion-input#confirm"]')&.text&.strip).to eq("この場所に残す")
-    expect(controller_scope.css("form, button[type='submit']")).to be_empty
+    expect(dialog.at_css('button[type="submit"]')&.text&.strip).to eq("この場所に残す")
+  end
+
+  it "saves the current user's emotion record for today and redirects to the tree" do
+    emotion = Emotion.order(:display_order).first
+
+    travel_to Time.zone.local(2026, 9, 10, 14, 0, 0) do
+      expect do
+        post emotion_records_path, params: {
+          emotion_record: {
+            emotion_id: emotion.id,
+            strength: 72,
+            afterglow: 64,
+            position_x: 38.25,
+            position_y: 41.75,
+            felt_at: "13:45",
+            memo: "穏やかな気持ち"
+          }
+        }
+      end.to change(user.emotion_records, :count).by(1)
+
+      expect(response).to redirect_to(tree_path)
+      expect(response).to have_http_status(:see_other)
+
+      record = user.emotion_records.order(:id).last
+      expect(record).to have_attributes(
+        emotion_id: emotion.id,
+        strength: 72,
+        afterglow: 64,
+        position_x: 38.25,
+        position_y: 41.75,
+        felt_on: Date.new(2026, 9, 10),
+        memo: "穏やかな気持ち"
+      )
+      expect(record.felt_at.strftime("%H:%M")).to eq("13:45")
+    end
+  end
+
+  it "allows the same user to save multiple emotion records on the same day" do
+    emotion = Emotion.order(:display_order).first
+    params = {
+      emotion_record: {
+        emotion_id: emotion.id,
+        strength: 50,
+        afterglow: 50,
+        position_x: 40,
+        position_y: 40
+      }
+    }
+
+    expect do
+      2.times { post emotion_records_path, params: params }
+    end.to change(user.emotion_records, :count).by(2)
+
+    expect(user.emotion_records.order(:id).last(2).map(&:felt_on)).to all(eq(Date.current))
   end
 
   it "reflects changes to stored names, colors and display order instead of fixed view values" do
