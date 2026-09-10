@@ -22,5 +22,5 @@ Rails.application.routes.draw do
   get "mypage" => "mypages#show", as: :mypage
 
   resources :users, only: [:new, :create]
-  resources :emotion_records, only: :new
+  resources :emotion_records, only: [:new, :create]
 end

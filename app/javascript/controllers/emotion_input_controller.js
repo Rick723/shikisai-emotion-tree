@@ -3,7 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "strength", "strengthValue", "afterglow", "afterglowValue", "emotion",
-    "tree", "preview", "memo", "dialog", "feltAt", "backButton", "confirmationButton",
+    "tree", "preview", "memo", "dialog", "feltAt", "positionX", "positionY",
+    "backButton", "confirmationButton",
     "confirmationEmotion", "confirmationStrength", "confirmationAfterglow",
     "confirmationDate", "confirmationMemo"
   ]
@@ -40,6 +41,8 @@ export default class extends Controller {
       position_x: Math.min(100, Math.max(0, (event.clientX - left) / width * 100)),
       position_y: Math.min(100, Math.max(0, (event.clientY - top) / height * 100))
     }
+    this.positionXTarget.value = this.position.position_x
+    this.positionYTarget.value = this.position.position_y
     this.updatePreview()
   }
 
@@ -75,10 +78,6 @@ export default class extends Controller {
 
   back(event) {
     event?.preventDefault()
-    this.closeDialog()
-  }
-
-  confirm() {
     this.closeDialog()
   }
 
