@@ -11,12 +11,25 @@ RSpec.describe "Calendar month and records", type: :request do
   end
 
   before do
+    Rails.application.load_seed
     post login_path, params: { session: { email: user.email, password: user.password } }
   end
 
   def expect_month(value)
     expect(response).to have_http_status(:ok)
     expect(response.parsed_body.at_css(".calendar-grid__month time")["datetime"]).to eq(value)
+  end
+
+  def emotion_named(name)
+    Emotion.find_by!(name: name)
+  end
+
+  def calendar_cell(date)
+    response.parsed_body.at_css(".calendar-grid__date[datetime='#{date}']").parent
+  end
+
+  def swatch_colors(element)
+    element.css(".calendar-grid__swatch").map { |swatch| swatch["style"] }
   end
 
   it "uses the application's current month when unspecified" do
@@ -45,7 +58,6 @@ RSpec.describe "Calendar month and records", type: :request do
       cells = rows.flat_map { |row| row.css("td").to_a }
       expect(cells.take(month.wday).all? { |cell| cell["class"] == "calendar-grid__empty" }).to be(true)
       expect(cells[month.wday].at_css("time")["datetime"]).to eq(month.iso8601)
-      expect(response.parsed_body.at_css(".tree-page__notice").text).to include("感情の色は表示サンプル")
     end
   end
 
@@ -59,7 +71,7 @@ RSpec.describe "Calendar month and records", type: :request do
   end
 
   it "fetches only the user's target-month records with their emotions, including both boundaries" do
-    emotion = create(:emotion)
+    emotion = emotion_named("happy")
     first = create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-02-01")
     last = create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-02-29")
     create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-01-31")
@@ -69,7 +81,6 @@ RSpec.describe "Calendar month and records", type: :request do
     get calendar_path, params: { month: "2024-02" }
 
     expect_month("2024-02")
-    # ISSUE 29 will consume these records; there is intentionally no record output in the view yet.
     records = controller.view_assigns.fetch("emotion_records")
     expect(records).to be_loaded
     expect(records.map(&:id)).to contain_exactly(first.id, last.id)
@@ -78,11 +89,79 @@ RSpec.describe "Calendar month and records", type: :request do
   end
 
   it "returns no records when only another user has records in the month" do
-    create(:emotion_record, felt_on: "2026-09-01")
+    create(:emotion_record, emotion: emotion_named("happy"), felt_on: "2026-09-01")
 
     get calendar_path
 
     expect_month("2026-09")
     expect(controller.view_assigns.fetch("emotion_records")).to be_empty
+  end
+
+  it "shows no cell colors for a day without records and shows all eight legend emotions in display order" do
+    get calendar_path
+
+    colors = calendar_cell("2026-09-01").at_css(".calendar-grid__colors")
+    expect(colors["aria-label"]).to eq("感情の色なし")
+    expect(colors.css(".calendar-grid__swatch")).to be_empty
+
+    legend = response.parsed_body.at_css(".calendar-legend")
+    expect(legend["aria-label"]).to eq("感情の色")
+    expect(legend.css(".calendar-legend__item").map { |item| item.text.strip })
+      .to eq(%w[うれしい たのしい 安心した 感謝 悲しい イライラ 不安 その他])
+    expect(legend.css(".tree-legend__swatch").map { |swatch| swatch["style"] }).to eq(
+      Emotion.order(:display_order).map { |emotion| "background-color: #{emotion.color_code}" }
+    )
+  end
+
+  it "deduplicates an emotion using its maximum strength and shows only the top three emotions" do
+    felt_on = Date.new(2026, 9, 5)
+    create(:emotion_record, user: user, emotion: emotion_named("happy"), strength: 30, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("happy"), strength: 80, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("other"), strength: 70, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("anxious"), strength: 60, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("irritated"), strength: 50, felt_on: felt_on)
+
+    get calendar_path
+
+    colors = calendar_cell("2026-09-05").at_css(".calendar-grid__colors")
+    expect(colors["aria-label"]).to eq("うれしい、その他、不安")
+    expect(swatch_colors(colors)).to eq([
+      "background-color: #E6A6B6",
+      "background-color: #D6D3CF",
+      "background-color: #8585C7"
+    ])
+    expect(colors.css(".calendar-grid__swatch").size).to eq(3)
+    expect(swatch_colors(colors)).not_to include("background-color: #F28C6B")
+  end
+
+  it "orders equal-strength emotions by display order" do
+    felt_on = Date.new(2026, 9, 12)
+    create(:emotion_record, user: user, emotion: emotion_named("sad"), strength: 60, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("grateful"), strength: 60, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("happy"), strength: 60, felt_on: felt_on)
+
+    get calendar_path
+
+    colors = calendar_cell("2026-09-12").at_css(".calendar-grid__colors")
+    expect(colors["aria-label"]).to eq("うれしい、感謝、悲しい")
+    expect(swatch_colors(colors)).to eq([
+      "background-color: #E6A6B6",
+      "background-color: #BDE7C5",
+      "background-color: #61749B"
+    ])
+  end
+
+  it "keeps records from different dates in their own cells and uses emotion labels and colors" do
+    create(:emotion_record, user: user, emotion: emotion_named("fun"), felt_on: "2026-09-19")
+    create(:emotion_record, user: user, emotion: emotion_named("sad"), felt_on: "2026-09-20")
+
+    get calendar_path
+
+    first_colors = calendar_cell("2026-09-19").at_css(".calendar-grid__colors")
+    second_colors = calendar_cell("2026-09-20").at_css(".calendar-grid__colors")
+    expect(first_colors["aria-label"]).to eq("たのしい")
+    expect(swatch_colors(first_colors)).to eq(["background-color: #FFD89A"])
+    expect(second_colors["aria-label"]).to eq("悲しい")
+    expect(swatch_colors(second_colors)).to eq(["background-color: #61749B"])
   end
 end

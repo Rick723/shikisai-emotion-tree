@@ -5,12 +5,7 @@
     <header class="tree-page__heading">
       <h1 class="tree-page__title">カレンダー</h1>
       <p id="calendar-description" class="calendar-page__description">一日ごとの感情を、色で振り返る。</p>
-      <p class="tree-page__notice">感情の色は表示サンプルです。実際の記録はまだ反映されません。</p>
     </header>
-
-    <%# 感情の色はISSUE 12の固定サンプル。実記録の日別集計・色表示はISSUE 29で対応する。 %>
-    <% emotion_labels = { "happy" => "うれしい", "fun" => "たのしい", "grateful" => "感謝" } %>
-    <% sample_days = { 5 => %w[happy], 12 => %w[fun grateful], 19 => %w[happy fun grateful] } %>
 
     <div class="calendar-page__content">
       <table class="calendar-grid" aria-describedby="calendar-description">
@@ -29,16 +24,16 @@
             <tr>
               <% week.each do |day| %>
                 <% if day %>
-                  <% emotions = sample_days.fetch(day.day, []) %>
+                  <% emotions = @daily_emotions.fetch(day, []) %>
                   <td>
                     <%= time_tag day, day.day, class: "calendar-grid__date" %>
                     <span
                       class="calendar-grid__colors"
                       role="img"
-                      aria-label="<%= emotions.empty? ? "感情の色なし" : emotions.map { |emotion| emotion_labels.fetch(emotion) }.join("、") %>"
+                      aria-label="<%= emotions.empty? ? "感情の色なし" : emotions.map { |emotion| t("emotions.#{emotion.name}") }.join("、") %>"
                     >
                       <% emotions.each do |emotion| %>
-                        <span class="tree-legend__swatch tree-legend__swatch--<%= emotion %> calendar-grid__swatch" aria-hidden="true"></span>
+                        <span class="tree-legend__swatch calendar-grid__swatch" style="background-color: <%= emotion.color_code %>" aria-hidden="true"></span>
                       <% end %>
                     </span>
                   </td>
@@ -51,11 +46,11 @@
         </tbody>
       </table>
 
-      <ul class="calendar-legend" aria-label="サンプルの感情の色">
-        <% emotion_labels.each do |emotion, label| %>
+      <ul class="calendar-legend" aria-label="感情の色">
+        <% @emotions.each do |emotion| %>
           <li class="calendar-legend__item">
-            <span class="tree-legend__swatch tree-legend__swatch--<%= emotion %>" aria-hidden="true"></span>
-            <span><%= label %></span>
+            <span class="tree-legend__swatch" style="background-color: <%= emotion.color_code %>" aria-hidden="true"></span>
+            <span><%= t("emotions.#{emotion.name}") %></span>
           </li>
         <% end %>
       </ul>
