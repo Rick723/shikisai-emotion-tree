@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "strength", "strengthValue", "afterglow", "afterglowValue", "emotion",
-    "tree", "preview", "memo", "dialog", "feltAt", "backButton",
+    "tree", "preview", "memo", "dialog", "feltAt", "backButton", "confirmationButton",
     "confirmationEmotion", "confirmationStrength", "confirmationAfterglow",
     "confirmationDate", "confirmationMemo"
   ]
@@ -41,12 +41,12 @@ export default class extends Controller {
       position_y: Math.min(100, Math.max(0, (event.clientY - top) / height * 100))
     }
     this.updatePreview()
-    this.openConfirmation()
   }
 
   updatePreview() {
     const emotion = this.emotionTargets.find(input => input.checked)
     this.previewTarget.hidden = !this.position || !emotion
+    this.confirmationButtonTarget.disabled = this.previewTarget.hidden
     if (this.previewTarget.hidden) return
 
     const style = this.previewTarget.style
@@ -75,10 +75,6 @@ export default class extends Controller {
 
   back(event) {
     event?.preventDefault()
-    this.position = null
-    this.previewTarget.hidden = true
-    this.previewTarget.style.removeProperty("--preview-x")
-    this.previewTarget.style.removeProperty("--preview-y")
     this.closeDialog()
   }
 

@@ -42,14 +42,18 @@ RSpec.describe "Emotion input", type: :request do
     page = response.parsed_body
     controller_scope = page.at_css('[data-controller="emotion-input"]')
     dialog = controller_scope.at_css('dialog#emotion-confirmation[aria-labelledby="emotion-confirmation-title"]')
+    confirmation_button = controller_scope.at_css('button[data-action="emotion-input#openConfirmation"]')
 
     expect(controller_scope["data-emotion-input-today-value"]).to eq(I18n.l(Date.current, format: "%Y年%-m月%-d日"))
     expect(controller_scope.at_css('textarea[data-emotion-input-target="memo"]')).to be_present
+    expect(confirmation_button.text.strip).to eq("この位置で確認する")
+    expect(confirmation_button["type"]).to eq("button")
+    expect(confirmation_button["disabled"]).to eq("")
     expect(dialog).to be_present
     expect(dialog.at_css('input[type="time"][data-emotion-input-target="feltAt"]')).to be_present
     expect(dialog.at_css('button[type="button"][data-action="emotion-input#back"]')&.text&.strip).to eq("戻る")
     expect(dialog.at_css('button[type="button"][data-action="emotion-input#confirm"]')&.text&.strip).to eq("この場所に残す")
-    expect(dialog.css("form, button[type='submit']")).to be_empty
+    expect(controller_scope.css("form, button[type='submit']")).to be_empty
   end
 
   it "reflects changes to stored names, colors and display order instead of fixed view values" do

@@ -12,6 +12,24 @@
   text-align: center;
 }
 
+.emotion-form-page__confirmation-button {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto 0;
+  text-align: center;
+}
+
+.emotion-form-page__confirmation-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.emotion-form-page__confirmation-button:disabled:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
 .emotion-form-page__tree {
   cursor: crosshair;
   touch-action: manipulation;
