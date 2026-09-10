@@ -12,6 +12,24 @@
   text-align: center;
 }
 
+.emotion-form-page__confirmation-button {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto 0;
+  text-align: center;
+}
+
+.emotion-form-page__confirmation-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.emotion-form-page__confirmation-button:disabled:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
 .emotion-form-page__tree {
   cursor: crosshair;
   touch-action: manipulation;
@@ -114,6 +132,89 @@
   resize: vertical;
 }
 
+.emotion-confirmation {
+  box-sizing: border-box;
+  width: min(calc(100% - 40px), 560px);
+  max-height: calc(100dvh - 40px);
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--border-radius) + 10px);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.emotion-confirmation::backdrop {
+  background-color: rgb(52 57 52 / 45%);
+}
+
+.emotion-confirmation__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.emotion-confirmation__description {
+  margin: 12px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.emotion-confirmation__summary {
+  display: grid;
+  gap: 0;
+  margin: 24px 0 0;
+}
+
+.emotion-confirmation__summary > div {
+  display: grid;
+  grid-template-columns: minmax(7em, 0.4fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.emotion-confirmation__summary > div:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.emotion-confirmation__summary dt {
+  font-weight: 600;
+}
+
+.emotion-confirmation__summary dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.emotion-confirmation__memo-row dd {
+  white-space: pre-wrap;
+}
+
+.emotion-confirmation__time {
+  margin-top: 24px;
+}
+
+.emotion-confirmation__time .auth-field__input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.emotion-confirmation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.emotion-confirmation__actions .button {
+  flex: 1;
+}
+
 @media (max-width: 1060px) {
   .emotion-form-page__content {
     grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
@@ -129,5 +230,20 @@
 
   .emotion-form {
     padding: 24px 16px;
+  }
+
+  .emotion-confirmation {
+    width: min(calc(100% - 24px), 560px);
+    max-height: calc(100dvh - 24px);
+    padding: 24px 16px;
+  }
+
+  .emotion-confirmation__summary > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .emotion-confirmation__actions {
+    flex-direction: column;
   }
 }

@@ -30,9 +30,30 @@ RSpec.describe "Emotion input", type: :request do
     Emotion.order(:display_order).zip(choices).each do |emotion, choice|
       expect(choice.at_css('input[type="radio"]')["value"]).to eq(emotion.id.to_s)
       expect(choice.at_css("input")["data-emotion-color"]).to eq(emotion.color_code)
+      expect(choice.at_css("input")["data-emotion-name"]).to eq(I18n.t("emotions.#{emotion.name}", raise: true))
       expect(choice.text.strip).to eq(I18n.t("emotions.#{emotion.name}", raise: true))
       expect(choice.at_css(".tree-legend__swatch")["style"]).to eq("background-color: #{emotion.color_code}")
     end
+  end
+
+  it "renders a non-submitting confirmation dialog for the current input and placement" do
+    get new_emotion_record_path
+
+    page = response.parsed_body
+    controller_scope = page.at_css('[data-controller="emotion-input"]')
+    dialog = controller_scope.at_css('dialog#emotion-confirmation[aria-labelledby="emotion-confirmation-title"]')
+    confirmation_button = controller_scope.at_css('button[data-action="emotion-input#openConfirmation"]')
+
+    expect(controller_scope["data-emotion-input-today-value"]).to eq(I18n.l(Date.current, format: "%Y年%-m月%-d日"))
+    expect(controller_scope.at_css('textarea[data-emotion-input-target="memo"]')).to be_present
+    expect(confirmation_button.text.strip).to eq("この位置で確認する")
+    expect(confirmation_button["type"]).to eq("button")
+    expect(confirmation_button["disabled"]).to eq("")
+    expect(dialog).to be_present
+    expect(dialog.at_css('input[type="time"][data-emotion-input-target="feltAt"]')).to be_present
+    expect(dialog.at_css('button[type="button"][data-action="emotion-input#back"]')&.text&.strip).to eq("戻る")
+    expect(dialog.at_css('button[type="button"][data-action="emotion-input#confirm"]')&.text&.strip).to eq("この場所に残す")
+    expect(controller_scope.css("form, button[type='submit']")).to be_empty
   end
 
   it "reflects changes to stored names, colors and display order instead of fixed view values" do

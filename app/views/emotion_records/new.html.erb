@@ -11,12 +11,13 @@
       <p class="tree-page__notice">入力を試せる表示サンプルです。入力内容は保存されません。</p>
     </header>
 
-    <div class="emotion-form-page__content" data-controller="emotion-input">
+    <div class="emotion-form-page__content" data-controller="emotion-input" data-emotion-input-today-value="<%= l(@today, format: "%Y年%-m月%-d日") %>" data-action="turbo:before-cache@document->emotion-input#closeDialog">
       <figure class="tree-visual">
         <div class="tree-visual__layers emotion-form-page__tree" data-emotion-input-target="tree" data-action="pointerup->emotion-input#selectPosition">
           <%= render "shared/tree_base", alt: "淡い緑の基礎木" %>
           <div class="emotion-form-page__preview" data-emotion-input-target="preview" aria-hidden="true" hidden></div>
         </div>
+        <button type="button" class="button button--primary emotion-form-page__confirmation-button" data-emotion-input-target="confirmationButton" data-action="emotion-input#openConfirmation" disabled>この位置で確認する</button>
         <figcaption class="auth-field__hint emotion-form-page__caption">
           感情を選び、木の葉をクリック・タップすると仮配置できます。入力内容は保存されません。
         </figcaption>
@@ -30,7 +31,7 @@
           <div class="emotion-form__choices">
             <% @emotions.each do |emotion| %>
               <label class="emotion-form__choice">
-                <input type="radio" name="emotion" value="<%= emotion.id %>" data-emotion-input-target="emotion" data-emotion-color="<%= emotion.color_code %>" data-action="change->emotion-input#updatePreview">
+                <input type="radio" name="emotion" value="<%= emotion.id %>" data-emotion-input-target="emotion" data-emotion-color="<%= emotion.color_code %>" data-emotion-name="<%= t("emotions.#{emotion.name}") %>" data-action="change->emotion-input#updatePreview">
                 <span class="tree-legend__swatch" style="background-color: <%= emotion.color_code %>" aria-hidden="true"></span>
                 <span><%= t("emotions.#{emotion.name}") %></span>
               </label>
@@ -62,10 +63,52 @@
 
         <div>
           <label for="emotion-memo" class="auth-field__label">メモ（任意）</label>
-          <textarea id="emotion-memo" class="auth-field__input emotion-form__memo" rows="4" maxlength="200" aria-describedby="emotion-memo-hint"></textarea>
+          <textarea id="emotion-memo" class="auth-field__input emotion-form__memo" rows="4" maxlength="200" aria-describedby="emotion-memo-hint" data-emotion-input-target="memo"></textarea>
           <p id="emotion-memo-hint" class="auth-field__hint">200文字以内</p>
         </div>
       </div>
+
+      <dialog id="emotion-confirmation" class="emotion-confirmation" aria-labelledby="emotion-confirmation-title" aria-describedby="emotion-confirmation-description" data-emotion-input-target="dialog" data-action="cancel->emotion-input#back close->emotion-input#restoreFocus">
+        <h2 id="emotion-confirmation-title" class="emotion-confirmation__title">登録内容を確認</h2>
+        <p id="emotion-confirmation-description" class="emotion-confirmation__description">この内容と場所でよろしいですか？入力内容はまだ保存されません。</p>
+
+        <dl class="emotion-confirmation__summary">
+          <div>
+            <dt>感情</dt>
+            <dd data-emotion-input-target="confirmationEmotion"></dd>
+          </div>
+          <div>
+            <dt>感情の強さ</dt>
+            <dd><span data-emotion-input-target="confirmationStrength"></span> / 100</dd>
+          </div>
+          <div>
+            <dt>感情の余韻</dt>
+            <dd><span data-emotion-input-target="confirmationAfterglow"></span> / 100</dd>
+          </div>
+          <div>
+            <dt>日付</dt>
+            <dd data-emotion-input-target="confirmationDate"></dd>
+          </div>
+          <div>
+            <dt>木の位置</dt>
+            <dd>仮配置済み</dd>
+          </div>
+          <div class="emotion-confirmation__memo-row">
+            <dt>メモ</dt>
+            <dd data-emotion-input-target="confirmationMemo"></dd>
+          </div>
+        </dl>
+
+        <div class="emotion-confirmation__time">
+          <label for="emotion-felt-at" class="auth-field__label">感じた時刻（任意）</label>
+          <input id="emotion-felt-at" class="auth-field__input" type="time" data-emotion-input-target="feltAt">
+        </div>
+
+        <div class="emotion-confirmation__actions">
+          <button type="button" class="button button--secondary" data-emotion-input-target="backButton" data-action="emotion-input#back">戻る</button>
+          <button type="button" class="button button--primary" data-action="emotion-input#confirm">この場所に残す</button>
+        </div>
+      </dialog>
     </div>
   </main>
 
