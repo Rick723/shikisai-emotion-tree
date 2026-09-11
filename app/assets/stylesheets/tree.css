@@ -25,8 +25,33 @@
   line-height: 1.45;
 }
 
+.tree-page__date-navigation {
+  display: grid;
+  grid-template-columns: minmax(4rem, 1fr) auto minmax(4rem, 1fr);
+  align-items: center;
+  gap: 16px;
+  width: min(100%, 400px);
+  margin: 16px auto 0;
+}
+
+.tree-page__date-navigation > :first-child {
+  justify-self: end;
+}
+
+.tree-page__date-navigation > :last-child {
+  justify-self: start;
+}
+
+.tree-page__date-navigation a {
+  color: var(--color-text);
+}
+
+.tree-page__date-navigation-disabled {
+  color: var(--color-text-muted);
+}
+
 .tree-page__date {
-  margin: 16px 0 0;
+  margin: 0;
 }
 
 .tree-page__notice {
@@ -132,6 +157,10 @@
 
   .tree-page__title {
     font-size: 1.75rem;
+  }
+
+  .tree-page__date-navigation {
+    gap: 10px;
   }
 
   .tree-page__content {

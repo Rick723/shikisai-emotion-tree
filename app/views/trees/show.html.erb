@@ -1,16 +1,31 @@
 <% content_for :title, "木を見る | Shikisai 〜感情の木〜" %>
+<% tree_date_label = @is_today ? "今日" : l(@display_date, format: "%Y年%-m月%-d日") %>
 
 <div class="tree-page">
   <main class="container tree-page__main">
     <header class="tree-page__heading">
       <h1 class="tree-page__title">木を見る</h1>
 
-      <p class="tree-page__date">
-        <%= time_tag @today, "#{l(@today, format: "%Y年%-m月%-d日")}（#{%w[日 月 火 水 木 金 土][@today.wday]}）" %>
-      </p>
+      <nav class="tree-page__date-navigation" aria-label="表示する日付">
+        <%= link_to "前日", tree_path(date: @display_date.prev_day.iso8601),
+                    aria: { label: "前日（#{l(@display_date.prev_day, format: "%Y年%-m月%-d日")}）を見る" } %>
+
+        <p class="tree-page__date">
+          <%= time_tag @display_date, "#{l(@display_date, format: "%Y年%-m月%-d日")}（#{%w[日 月 火 水 木 金 土][@display_date.wday]}）" %>
+        </p>
+
+        <% if @is_today %>
+          <span class="tree-page__date-navigation-disabled" aria-disabled="true">翌日</span>
+        <% else %>
+          <%= link_to "翌日", tree_path(date: @display_date.next_day.iso8601),
+                      aria: { label: "翌日（#{l(@display_date.next_day, format: "%Y年%-m月%-d日")}）を見る" } %>
+        <% end %>
+      </nav>
 
       <% if @emotion_records.empty? %>
-        <p class="tree-page__notice">今日はまだ感情が記録されていません。</p>
+        <p class="tree-page__notice">
+          <%= @is_today ? "今日はまだ感情が記録されていません。" : "この日は感情が記録されていません。" %>
+        </p>
       <% end %>
     </header>
 
@@ -19,7 +34,7 @@
         <div
           class="tree-visual__layers"
           role="img"
-          aria-label="<%= @emotion_records.empty? ? "今日の感情がまだない淡い緑の基礎木" : "今日の感情を#{@emotion_records.size}件重ねた木" %>"
+          aria-label="<%= @emotion_records.empty? ? "#{tree_date_label}の感情がまだない淡い緑の基礎木" : "#{tree_date_label}の感情を#{@emotion_records.size}件重ねた木" %>"
         >
           <%= render "shared/tree_base", alt: "" %>
 
@@ -32,7 +47,7 @@
           <% end %>
         </div>
 
-        <% if @emotion_records.empty? %>
+        <% if @is_today && @emotion_records.empty? %>
           <figcaption class="tree-visual__empty">
             <p>いまの気持ちを選んで、今日の木に色を残してみましょう。</p>
             <%= link_to "今日を彩る", new_emotion_record_path, class: "button button--primary" %>
