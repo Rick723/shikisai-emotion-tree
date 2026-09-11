@@ -24,6 +24,9 @@
 # Bundler
 /.bundle
 
+# Test coverage
+/coverage/
+
 # OS / editor files
 .DS_Store
 *.swp
