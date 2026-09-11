@@ -1,3 +1,7 @@
+require "simplecov"
+
+SimpleCov.start "rails"
+
 # Loaded by .rspec. Specs that need Rails should require "rails_helper".
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
