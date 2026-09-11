@@ -1,0 +1,36 @@
+ja:
+  activerecord:
+    attributes:
+      emotion_record:
+        emotion: 感情の種類
+        strength: 感情の強さ
+        afterglow: 感情の余韻
+        position_x: 木の横位置
+        position_y: 木の縦位置
+        memo: メモ
+    errors:
+      models:
+        emotion_record:
+          attributes:
+            emotion:
+              required: を選択してください
+            strength:
+              not_a_number: は数値で入力してください
+              not_an_integer: は整数で入力してください
+              greater_than_or_equal_to: は%{count}以上で入力してください
+              less_than_or_equal_to: は%{count}以下で入力してください
+            afterglow:
+              not_a_number: は数値で入力してください
+              not_an_integer: は整数で入力してください
+              greater_than_or_equal_to: は%{count}以上で入力してください
+              less_than_or_equal_to: は%{count}以下で入力してください
+            position_x:
+              not_a_number: は数値で入力してください
+              greater_than_or_equal_to: は%{count}以上で入力してください
+              less_than_or_equal_to: は%{count}以下で入力してください
+            position_y:
+              not_a_number: は数値で入力してください
+              greater_than_or_equal_to: は%{count}以上で入力してください
+              less_than_or_equal_to: は%{count}以下で入力してください
+            memo:
+              too_long: は%{count}文字以内で入力してください

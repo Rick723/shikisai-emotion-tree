@@ -11,6 +11,16 @@
       <p class="tree-page__notice">入力内容を確認して、今日の感情を木に残しましょう。</p>
     </header>
 
+    <% if @emotion_record.errors.any? %>
+      <div role="alert">
+        <ul>
+          <% @emotion_record.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <%= form_with model: @emotion_record, class: "emotion-form-page__content", data: { controller: "emotion-input", emotion_input_today_value: l(@today, format: "%Y年%-m月%-d日"), action: "turbo:before-cache@document->emotion-input#closeDialog" } do |form| %>
       <%= form.hidden_field :position_x, data: { emotion_input_target: "positionX" } %>
       <%= form.hidden_field :position_y, data: { emotion_input_target: "positionY" } %>
@@ -43,24 +53,26 @@
 
         <div>
           <label for="emotion-strength" class="auth-field__label">感情の強さ</label>
-          <%= form.range_field :strength, id: "emotion-strength", class: "emotion-form__range", min: 0, max: 100, step: 1, value: 50, aria: { describedby: "emotion-strength-hint" }, data: { emotion_input_target: "strength", action: "input->emotion-input#updateStrength" } %>
+          <% strength_value = @emotion_record.strength.nil? ? 50 : @emotion_record.strength %>
+          <%= form.range_field :strength, id: "emotion-strength", class: "emotion-form__range", min: 0, max: 100, step: 1, value: strength_value, aria: { describedby: "emotion-strength-hint" }, data: { emotion_input_target: "strength", action: "input->emotion-input#updateStrength" } %>
           <div class="emotion-form__range-labels" aria-hidden="true">
             <span>弱い</span>
             <span>強い</span>
           </div>
           <p id="emotion-strength-hint" class="auth-field__hint">どのくらい強く感じましたか？</p>
-          <p class="auth-field__hint">現在の強さ：<output for="emotion-strength" data-emotion-input-target="strengthValue">50</output> / 100</p>
+          <p class="auth-field__hint">現在の強さ：<output for="emotion-strength" data-emotion-input-target="strengthValue"><%= strength_value %></output> / 100</p>
         </div>
 
         <div>
           <label for="emotion-afterglow" class="auth-field__label">感情の余韻</label>
-          <%= form.range_field :afterglow, id: "emotion-afterglow", class: "emotion-form__range", min: 0, max: 100, step: 1, value: 50, aria: { describedby: "emotion-afterglow-hint" }, data: { emotion_input_target: "afterglow", action: "input->emotion-input#updateAfterglow" } %>
+          <% afterglow_value = @emotion_record.afterglow.nil? ? 50 : @emotion_record.afterglow %>
+          <%= form.range_field :afterglow, id: "emotion-afterglow", class: "emotion-form__range", min: 0, max: 100, step: 1, value: afterglow_value, aria: { describedby: "emotion-afterglow-hint" }, data: { emotion_input_target: "afterglow", action: "input->emotion-input#updateAfterglow" } %>
           <div class="emotion-form__range-labels" aria-hidden="true">
             <span>ほのか</span>
             <span>くっきり</span>
           </div>
           <p id="emotion-afterglow-hint" class="auth-field__hint">いま、どのくらい気持ちが残っていますか？</p>
-          <p class="auth-field__hint">現在の余韻：<output for="emotion-afterglow" data-emotion-input-target="afterglowValue">50</output> / 100</p>
+          <p class="auth-field__hint">現在の余韻：<output for="emotion-afterglow" data-emotion-input-target="afterglowValue"><%= afterglow_value %></output> / 100</p>
         </div>
 
         <div>
