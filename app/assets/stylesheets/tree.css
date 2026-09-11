@@ -1,4 +1,4 @@
-/* Shared tree layout and the tree page's fixed sample colors. */
+/* Shared tree layout and today's emotion colors. */
 
 .tree-page {
   display: flex;
@@ -56,39 +56,26 @@
   width: 100%;
 }
 
-/* Five fixed washes, clipped to the base silhouette. Remove in ISSUE 26. */
-
-.tree-visual__sample-colors {
+.tree-visual__color {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(
-      ellipse 24% 23% at 32% 32%,
-      #e6a6b6e6 15%,
-      #e6a6b600 100%
-    ),
-    radial-gradient(
-      ellipse 21% 19% at 60% 24%,
-      #ffd89ab3 15%,
-      #ffd89a00 100%
-    ),
-    radial-gradient(
-      ellipse 20% 17% at 70% 48%,
-      #bde7c5b3 15%,
-      #bde7c500 100%
-    ),
-    radial-gradient(
-      ellipse 12% 11% at 27% 57%,
-      #61749b80 10%,
-      #61749b00 100%
-    ),
-    radial-gradient(
-      ellipse 11% 12% at 70% 62%,
-      #8585c766 10%,
-      #8585c700 100%
-    );
+  background: radial-gradient(
+    ellipse var(--tree-radius) var(--tree-radius) at var(--tree-x) var(--tree-y),
+    var(--tree-color) 15%,
+    transparent 100%
+  );
+  opacity: var(--tree-opacity);
   mask: url("tree_base.png") center / 100% 100% no-repeat;
+}
+
+.tree-visual__empty {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.tree-visual__empty p {
+  margin: 0 0 16px;
 }
 
 .tree-legend {
@@ -129,38 +116,6 @@
   height: 24px;
   border: 1px solid rgb(52 57 52 / 15%);
   border-radius: 50%;
-}
-
-.tree-legend__swatch--happy {
-  background-color: #e6a6b6;
-}
-
-.tree-legend__swatch--fun {
-  background-color: #ffd89a;
-}
-
-.tree-legend__swatch--relieved {
-  background-color: #e9a76f;
-}
-
-.tree-legend__swatch--grateful {
-  background-color: #bde7c5;
-}
-
-.tree-legend__swatch--sad {
-  background-color: #61749b;
-}
-
-.tree-legend__swatch--irritated {
-  background-color: #f28c6b;
-}
-
-.tree-legend__swatch--anxious {
-  background-color: #8585c7;
-}
-
-.tree-legend__swatch--other {
-  background-color: #d6d3cf;
 }
 
 @media (max-width: 1060px) {
