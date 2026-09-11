@@ -6,10 +6,12 @@
       <h1 class="tree-page__title">木を見る</h1>
 
       <p class="tree-page__date">
-        <time datetime="2026-07-26">2026年7月26日（日）</time>
+        <%= time_tag @today, "#{l(@today, format: "%Y年%-m月%-d日")}（#{%w[日 月 火 水 木 金 土][@today.wday]}）" %>
       </p>
 
-      <p class="tree-page__notice">表示サンプル</p>
+      <% if @emotion_records.empty? %>
+        <p class="tree-page__notice">今日はまだ感情が記録されていません。</p>
+      <% end %>
     </header>
 
     <div class="tree-page__content">
@@ -17,13 +19,25 @@
         <div
           class="tree-visual__layers"
           role="img"
-          aria-label="淡い緑の木に、うれしい・たのしい・感謝・悲しい・不安の5色を重ねた表示サンプル"
+          aria-label="<%= @emotion_records.empty? ? "今日の感情がまだない淡い緑の基礎木" : "今日の感情を#{@emotion_records.size}件重ねた木" %>"
         >
           <%= render "shared/tree_base", alt: "" %>
 
-          <%# ISSUE 10の固定色。実データではなく、ISSUE 26で実記録の描画へ差し替える。 %>
-          <div class="tree-visual__sample-colors" aria-hidden="true"></div>
+          <% @emotion_records.each do |record| %>
+            <span
+              class="tree-visual__color"
+              style="--tree-color: <%= record.emotion.color_code %>; --tree-x: <%= record.position_x %>%; --tree-y: <%= record.position_y %>%; --tree-radius: <%= (10 + record.strength * 0.2).round(1) %>%; --tree-opacity: <%= (0.2 + record.afterglow * 0.008).round(3) %>"
+              aria-hidden="true"
+            ></span>
+          <% end %>
         </div>
+
+        <% if @emotion_records.empty? %>
+          <figcaption class="tree-visual__empty">
+            <p>いまの気持ちを選んで、今日の木に色を残してみましょう。</p>
+            <%= link_to "今日を彩る", new_emotion_record_path, class: "button button--primary" %>
+          </figcaption>
+        <% end %>
       </figure>
 
       <section class="tree-legend" aria-labelledby="tree-legend-title">
@@ -31,25 +45,16 @@
           感情の色
         </h2>
 
-        <%# 静的な凡例。Emotion / EmotionRecord / DBには接続しない。 %>
         <ul class="tree-legend__list">
-          <% [
-            ["うれしい", "happy"],
-            ["たのしい", "fun"],
-            ["安心した", "relieved"],
-            ["感謝", "grateful"],
-            ["悲しい", "sad"],
-            ["イライラ", "irritated"],
-            ["不安", "anxious"],
-            ["その他", "other"]
-          ].each do |label, emotion| %>
+          <% @emotions.each do |emotion| %>
             <li class="tree-legend__item">
               <span
-                class="tree-legend__swatch tree-legend__swatch--<%= emotion %>"
+                class="tree-legend__swatch"
+                style="background-color: <%= emotion.color_code %>"
                 aria-hidden="true"
               ></span>
 
-              <span><%= label %></span>
+              <span><%= t("emotions.#{emotion.name}") %></span>
             </li>
           <% end %>
         </ul>
