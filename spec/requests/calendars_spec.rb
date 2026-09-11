@@ -25,7 +25,7 @@ RSpec.describe "Calendar month and records", type: :request do
   end
 
   def calendar_cell(date)
-    response.parsed_body.at_css(".calendar-grid__date[datetime='#{date}']").parent
+    response.parsed_body.at_css(".calendar-grid__date[datetime='#{date}']").ancestors("td").first
   end
 
   def swatch_colors(element)
@@ -42,6 +42,46 @@ RSpec.describe "Calendar month and records", type: :request do
     get calendar_path, params: { month: "2026-09" }
 
     expect_month("2026-09")
+  end
+
+  it "links to the previous month and disables the next month in the current month" do
+    get calendar_path
+
+    navigation = response.parsed_body.at_css(".calendar-grid__month-navigation")
+    expect(navigation.at_css("a[aria-label='前月を表示']")["href"]).to eq(calendar_path(month: "2026-08"))
+    expect(navigation.at_css("a[aria-label='次月を表示']")).to be_nil
+    expect(navigation.at_css("[role='link'][aria-label='次月は表示できません'][aria-disabled='true']")).to be_present
+  end
+
+  it "links to both adjacent months when displaying a past month" do
+    get calendar_path, params: { month: "2026-08" }
+
+    navigation = response.parsed_body.at_css(".calendar-grid__month-navigation")
+    expect(navigation.at_css("a[aria-label='前月を表示']")["href"]).to eq(calendar_path(month: "2026-07"))
+    expect(navigation.at_css("a[aria-label='次月を表示']")["href"]).to eq(calendar_path(month: "2026-09"))
+    expect(navigation.at_css("[aria-disabled='true']")).to be_nil
+  end
+
+  it "links today and a past day without records directly to each day's tree" do
+    get calendar_path
+
+    expect(calendar_cell("2026-09-01").at_css("a.calendar-grid__day-link")["href"])
+      .to eq(tree_path(date: "2026-09-01"))
+
+    get calendar_path, params: { month: "2026-08" }
+
+    expect(user.emotion_records.where(felt_on: "2026-08-15")).to be_empty
+    expect(calendar_cell("2026-08-15").at_css("a.calendar-grid__day-link")["href"])
+      .to eq(tree_path(date: "2026-08-15"))
+  end
+
+  it "does not link future days to the tree and marks them as disabled" do
+    get calendar_path
+
+    future_cell = calendar_cell("2026-09-02")
+    expect(future_cell.at_css("a[href^='/tree']")).to be_nil
+    disabled_day = future_cell.at_css(".calendar-grid__day-link--disabled[role='link'][aria-disabled='true']")
+    expect(disabled_day["aria-label"]).to eq("2026年9月2日の木は表示できません")
   end
 
   ["2024-02", "2026-02", "2026-04", "2026-08", "2025-12"].each do |value|

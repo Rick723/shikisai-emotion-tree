@@ -1,4 +1,4 @@
-/* Calendar page: dynamic month dates with sample colors only. */
+/* Calendar page: month navigation and daily emotion colors. */
 
 .calendar-page__description {
   margin: 16px 0 0;
@@ -22,6 +22,41 @@
   font-size: 1.5rem;
 }
 
+.calendar-grid__month-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.calendar-grid__month-navigation time {
+  min-width: 8em;
+}
+
+.calendar-grid__month-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+a.calendar-grid__month-link:hover {
+  background-color: var(--color-background);
+}
+
+.calendar-grid__month-link--disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .calendar-grid th,
 .calendar-grid td {
   border: 1px solid var(--color-border);
@@ -35,8 +70,26 @@
 
 .calendar-grid td {
   height: 104px;
-  padding: 12px 6px;
+  padding: 0;
   vertical-align: top;
+}
+
+.calendar-grid__day-link {
+  display: block;
+  min-height: 104px;
+  padding: 12px 6px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+a.calendar-grid__day-link:hover {
+  background-color: var(--color-background);
+}
+
+.calendar-grid__day-link--disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .calendar-grid__date {
@@ -58,6 +111,10 @@
 }
 
 .calendar-grid__empty {
+  background-color: var(--color-background);
+}
+
+.calendar-grid__future {
   background-color: var(--color-background);
 }
 
@@ -86,6 +143,10 @@
 
   .calendar-grid td {
     height: 76px;
+  }
+
+  .calendar-grid__day-link {
+    min-height: 76px;
     padding: 10px 4px;
   }
 
