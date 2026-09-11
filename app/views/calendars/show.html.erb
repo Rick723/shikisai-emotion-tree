@@ -9,7 +9,23 @@
 
     <div class="calendar-page__content">
       <table class="calendar-grid" aria-describedby="calendar-description">
-        <caption class="calendar-grid__month"><time datetime="<%= @month.strftime("%Y-%m") %>"><%= l(@month, format: "%Y年%-m月") %></time></caption>
+        <caption class="calendar-grid__month">
+          <span class="calendar-grid__month-navigation">
+            <%= link_to calendar_path(month: @month.prev_month.strftime("%Y-%m")), class: "calendar-grid__month-link", aria: { label: "前月を表示" } do %>
+              <span aria-hidden="true">‹</span>
+            <% end %>
+            <time datetime="<%= @month.strftime("%Y-%m") %>"><%= l(@month, format: "%Y年%-m月") %></time>
+            <% if @month < Date.current.beginning_of_month %>
+              <%= link_to calendar_path(month: @month.next_month.strftime("%Y-%m")), class: "calendar-grid__month-link", aria: { label: "次月を表示" } do %>
+                <span aria-hidden="true">›</span>
+              <% end %>
+            <% else %>
+              <span class="calendar-grid__month-link calendar-grid__month-link--disabled" role="link" aria-label="次月は表示できません" aria-disabled="true">
+                <span aria-hidden="true">›</span>
+              </span>
+            <% end %>
+          </span>
+        </caption>
         <thead>
           <tr>
             <% %w[日 月 火 水 木 金 土].each do |weekday| %>
@@ -25,18 +41,21 @@
               <% week.each do |day| %>
                 <% if day %>
                   <% emotions = @daily_emotions.fetch(day, []) %>
-                  <td>
+                  <% cell_content = capture do %>
                     <%= time_tag day, day.day, class: "calendar-grid__date" %>
-                    <span
-                      class="calendar-grid__colors"
-                      role="img"
-                      aria-label="<%= emotions.empty? ? "感情の色なし" : emotions.map { |emotion| t("emotions.#{emotion.name}") }.join("、") %>"
-                    >
+                    <span class="calendar-grid__colors" role="img" aria-label="<%= emotions.empty? ? "感情の色なし" : emotions.map { |emotion| t("emotions.#{emotion.name}") }.join("、") %>">
                       <% emotions.each do |emotion| %>
                         <span class="tree-legend__swatch calendar-grid__swatch" style="background-color: <%= emotion.color_code %>" aria-hidden="true"></span>
                       <% end %>
                     </span>
-                  </td>
+                  <% end %>
+                  <% if day <= Date.current %>
+                    <td><%= link_to cell_content, tree_path(date: day.iso8601), class: "calendar-grid__day-link", aria: { label: "#{day.year}年#{day.month}月#{day.day}日の木を見る" } %></td>
+                  <% else %>
+                    <td class="calendar-grid__future">
+                      <span class="calendar-grid__day-link calendar-grid__day-link--disabled" role="link" aria-label="<%= "#{day.year}年#{day.month}月#{day.day}日の木は表示できません" %>" aria-disabled="true"><%= cell_content %></span>
+                    </td>
+                  <% end %>
                 <% else %>
                   <td class="calendar-grid__empty"></td>
                 <% end %>
