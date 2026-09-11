@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Today's tree", type: :request do
+RSpec.describe "Tree", type: :request do
   include ActiveSupport::Testing::TimeHelpers
 
   let(:user) { create(:user) }
@@ -26,6 +26,16 @@ RSpec.describe "Today's tree", type: :request do
     date = response.parsed_body.at_css(".tree-page__date time")
     expect(date["datetime"]).to eq("2026-09-10")
     expect(date.text).to eq("2026年9月10日（木）")
+  end
+
+  it "displays a valid past date" do
+    get tree_path, params: { date: "2026-09-08" }
+
+    expect(response).to have_http_status(:ok)
+    expect(controller.view_assigns.fetch("display_date")).to eq(Date.new(2026, 9, 8))
+    date = response.parsed_body.at_css(".tree-page__date time")
+    expect(date["datetime"]).to eq("2026-09-08")
+    expect(date.text).to eq("2026年9月8日（火）")
   end
 
   it "fetches only the current user's records for today and preloads their emotions in id order" do
@@ -58,6 +68,19 @@ RSpec.describe "Today's tree", type: :request do
 
     expect(controller.view_assigns.fetch("emotion_records")).to be_empty
     expect(response.parsed_body.css(".tree-visual__color")).to be_empty
+  end
+
+  it "fetches only the current user's records for the specified past date" do
+    emotion = emotion_named("happy")
+    expected = create(:emotion_record, user: user, emotion: emotion, felt_on: Date.new(2026, 9, 8))
+    create(:emotion_record, user: user, emotion: emotion, felt_on: Date.new(2026, 9, 7))
+    create(:emotion_record, emotion: emotion, felt_on: Date.new(2026, 9, 8))
+
+    get tree_path, params: { date: "2026-09-08" }
+
+    records = controller.view_assigns.fetch("emotion_records")
+    expect(records.map(&:id)).to eq([expected.id])
+    expect(response.parsed_body.css(".tree-visual__color").size).to eq(1)
   end
 
   it "draws multiple records on one tree" do
@@ -104,6 +127,64 @@ RSpec.describe "Today's tree", type: :request do
     link = page.at_css(".tree-visual__empty a")
     expect(link.text.strip).to eq("今日を彩る")
     expect(link["href"]).to eq(new_emotion_record_path)
+  end
+
+  it "shows the previous-day link and does not link to the future when displaying today" do
+    get tree_path
+
+    navigation = response.parsed_body.at_css(".tree-page__date-navigation")
+    previous_link = navigation.at_css("a")
+    expect(previous_link.text.strip).to eq("前日")
+    expect(previous_link["href"]).to eq(tree_path(date: "2026-09-09"))
+    expect(navigation.css("a").size).to eq(1)
+    expect(navigation.at_css("[aria-disabled='true']").text.strip).to eq("翌日")
+  end
+
+  it "links to the previous and next days when displaying a past date" do
+    get tree_path, params: { date: "2026-09-08" }
+
+    links = response.parsed_body.css(".tree-page__date-navigation a")
+    expect(links.map { |link| [link.text.strip, link["href"]] }).to eq(
+      [
+        ["前日", tree_path(date: "2026-09-07")],
+        ["翌日", tree_path(date: "2026-09-09")]
+      ]
+    )
+  end
+
+  it "falls back to today when a future date is specified" do
+    get tree_path, params: { date: "2026-09-11" }
+
+    expect(response).to have_http_status(:ok)
+    expect(controller.view_assigns.fetch("display_date")).to eq(Date.current)
+    expect(response.parsed_body.at_css(".tree-page__date time")["datetime"]).to eq("2026-09-10")
+  end
+
+  it "falls back to today for an invalid format or nonexistent date" do
+    ["2026/09/08", "2026-02-30"].each do |date_parameter|
+      get tree_path, params: { date: date_parameter }
+
+      expect(response).to have_http_status(:ok)
+      expect(controller.view_assigns.fetch("display_date")).to eq(Date.current)
+    end
+  end
+
+  it "does not raise an error for an unexpected date parameter type" do
+    get tree_path, params: { date: { value: "2026-09-08" } }
+
+    expect(response).to have_http_status(:ok)
+    expect(controller.view_assigns.fetch("display_date")).to eq(Date.current)
+  end
+
+  it "shows the base tree without an input link when a past date has no records" do
+    get tree_path, params: { date: "2026-09-08" }
+
+    page = response.parsed_body
+    expect(page.at_css(".tree-visual__base")).to be_present
+    expect(page.css(".tree-visual__color")).to be_empty
+    expect(page.at_css(".tree-page__notice").text.strip).to eq("この日は感情が記録されていません。")
+    expect(page.at_css(".tree-visual__layers")["aria-label"]).to eq("2026年9月8日の感情がまだない淡い緑の基礎木")
+    expect(page.at_css(".tree-visual__empty")).to be_nil
   end
 
   it "displays the stored emotions in display order with their names and colors" do
