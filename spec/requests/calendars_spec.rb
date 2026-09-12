@@ -155,8 +155,9 @@ RSpec.describe "Calendar month and records", type: :request do
 
   it "deduplicates an emotion using its maximum strength and shows only the top three emotions" do
     felt_on = Date.new(2026, 9, 5)
-    create(:emotion_record, user: user, emotion: emotion_named("happy"), strength: 30, felt_on: felt_on)
     create(:emotion_record, user: user, emotion: emotion_named("happy"), strength: 80, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("happy"), strength: 20, felt_on: felt_on)
+    create(:emotion_record, user: user, emotion: emotion_named("fun"), strength: 90, felt_on: felt_on)
     create(:emotion_record, user: user, emotion: emotion_named("other"), strength: 70, felt_on: felt_on)
     create(:emotion_record, user: user, emotion: emotion_named("anxious"), strength: 60, felt_on: felt_on)
     create(:emotion_record, user: user, emotion: emotion_named("irritated"), strength: 50, felt_on: felt_on)
@@ -164,14 +165,14 @@ RSpec.describe "Calendar month and records", type: :request do
     get calendar_path
 
     colors = calendar_cell("2026-09-05").at_css(".calendar-grid__colors")
-    expect(colors["aria-label"]).to eq("うれしい、その他、不安")
+    expect(colors["aria-label"]).to eq("たのしい、うれしい、その他")
     expect(swatch_colors(colors)).to eq([
+      "background-color: #FFD89A",
       "background-color: #E6A6B6",
       "background-color: #D6D3CF",
-      "background-color: #8585C7"
     ])
     expect(colors.css(".calendar-grid__swatch").size).to eq(3)
-    expect(swatch_colors(colors)).not_to include("background-color: #F28C6B")
+    expect(swatch_colors(colors)).not_to include("background-color: #8585C7")
   end
 
   it "orders equal-strength emotions by display order" do
