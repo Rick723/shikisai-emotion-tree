@@ -39,9 +39,8 @@ RSpec.describe "Tree", type: :request do
   end
 
   it "fetches only the current user's records for today and preloads their emotions in id order" do
-    emotion = emotion_named("happy")
-    first = create(:emotion_record, user: user, emotion: emotion, felt_on: Date.current)
-    second = create(:emotion_record, user: user, emotion: emotion, felt_on: Date.current)
+    first = create(:emotion_record, user: user, emotion: emotion_named("happy"), felt_on: Date.current)
+    second = create(:emotion_record, user: user, emotion: emotion_named("sad"), felt_on: Date.current)
 
     get tree_path
 

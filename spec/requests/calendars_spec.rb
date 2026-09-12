@@ -111,12 +111,13 @@ RSpec.describe "Calendar month and records", type: :request do
   end
 
   it "fetches only the user's target-month records with their emotions, including both boundaries" do
-    emotion = emotion_named("happy")
-    first = create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-02-01")
-    last = create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-02-29")
-    create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-01-31")
-    create(:emotion_record, user: user, emotion: emotion, felt_on: "2024-03-01")
-    create(:emotion_record, emotion: emotion, felt_on: "2024-02-15")
+    first_emotion = emotion_named("happy")
+    last_emotion = emotion_named("sad")
+    first = create(:emotion_record, user: user, emotion: first_emotion, felt_on: "2024-02-01")
+    last = create(:emotion_record, user: user, emotion: last_emotion, felt_on: "2024-02-29")
+    create(:emotion_record, user: user, emotion: first_emotion, felt_on: "2024-01-31")
+    create(:emotion_record, user: user, emotion: last_emotion, felt_on: "2024-03-01")
+    create(:emotion_record, emotion: first_emotion, felt_on: "2024-02-15")
 
     get calendar_path, params: { month: "2024-02" }
 
@@ -125,7 +126,7 @@ RSpec.describe "Calendar month and records", type: :request do
     expect(records).to be_loaded
     expect(records.map(&:id)).to contain_exactly(first.id, last.id)
     expect(records.all? { |record| record.association(:emotion).loaded? }).to be(true)
-    expect(records.map(&:emotion)).to eq([emotion, emotion])
+    expect(records.map(&:emotion)).to contain_exactly(first_emotion, last_emotion)
   end
 
   it "returns no records when only another user has records in the month" do

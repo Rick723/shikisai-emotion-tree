@@ -59,5 +59,6 @@ group :development do
 end
 
 group :test do
+  gem "bullet"
   gem "simplecov", require: false
 end
