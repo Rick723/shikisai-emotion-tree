@@ -86,6 +86,45 @@ RSpec.describe "Authentication and logout", type: :request do
     end
   end
 
+  describe "POST /emotion_records" do
+    let(:valid_emotion_record_params) do
+      {
+        emotion_record: {
+          emotion_id: Emotion.order(:display_order).first.id,
+          strength: 72,
+          afterglow: 64,
+          position_x: 38.25,
+          position_y: 41.75,
+          felt_at: "13:45",
+          memo: "穏やかな気持ち"
+        }
+      }
+    end
+
+    before { Rails.application.load_seed }
+
+    it "does not save an otherwise valid record for an unauthenticated user" do
+      expect do
+        post emotion_records_path, params: valid_emotion_record_params
+      end.not_to change(EmotionRecord, :count)
+
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(login_path)
+    end
+
+    it "does not save an otherwise valid record after logout" do
+      post login_path, params: { session: { email: user.email, password: user.password } }
+      delete logout_path
+
+      expect do
+        post emotion_records_path, params: valid_emotion_record_params
+      end.not_to change(EmotionRecord, :count)
+
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(login_path)
+    end
+  end
+
   it "connects the existing confirmation dialog to an enabled DELETE form" do
     post login_path, params: { session: { email: user.email, password: user.password } }
 
