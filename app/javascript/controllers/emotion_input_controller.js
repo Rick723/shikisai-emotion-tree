@@ -89,6 +89,25 @@ export default class extends Controller {
     this.backButtonTarget.focus()
   }
 
+  containFocus(event) {
+    if (event.key !== "Tab" || !this.dialogTarget.open) return
+
+    const focusableElements = Array.from(
+      this.dialogTarget.querySelectorAll('input:not([type="hidden"]):not([disabled]), button:not([disabled])')
+    )
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements.at(-1)
+    if (!firstElement || !lastElement) return
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault()
+      lastElement.focus()
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault()
+      firstElement.focus()
+    }
+  }
+
   back(event) {
     event?.preventDefault()
     this.closeDialog()
