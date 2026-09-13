@@ -1,5 +1,5 @@
 class EmotionRecordsController < ApplicationController
-  before_action :require_login, only: [:new, :create]
+  before_action :require_login, only: %i[new create]
 
   def new
     @emotion_record = current_user.emotion_records.new
@@ -25,14 +25,9 @@ class EmotionRecordsController < ApplicationController
 
   def emotion_record_params
     params.expect(
-      emotion_record: [
-        :emotion_id,
-        :strength,
-        :afterglow,
-        :position_x,
-        :position_y,
-        :felt_at,
-        :memo
+      emotion_record: %i[
+        emotion_id strength afterglow position_x position_y
+        felt_at memo
       ]
     )
   end

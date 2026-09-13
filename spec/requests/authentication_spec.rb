@@ -179,7 +179,7 @@ RSpec.describe "Authentication and logout", type: :request do
 
     it "accepts the confirmation form with its CSRF token and DELETE method override" do
       get mypage_path
-      form = response.parsed_body.at_css('dialog#logout-confirmation form')
+      form = response.parsed_body.at_css("dialog#logout-confirmation form")
 
       post logout_path, params: {
         _method: form.at_css('input[name="_method"]')["value"],

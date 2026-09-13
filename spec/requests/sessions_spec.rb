@@ -11,8 +11,8 @@ RSpec.describe "Login", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body.at_css('form[action="/login"][method="post"]')).to be_present
-      expect(response.parsed_body.at_css('input[name="session[email]"]')['autocomplete']).to eq("email")
-      expect(response.parsed_body.at_css('input[name="session[password]"]')['autocomplete']).to eq("current-password")
+      expect(response.parsed_body.at_css('input[name="session[email]"]')["autocomplete"]).to eq("email")
+      expect(response.parsed_body.at_css('input[name="session[password]"]')["autocomplete"]).to eq("current-password")
       expect(response.parsed_body.at_css('input[type="submit"][disabled]')).to be_nil
       expect(response.parsed_body.at_css('a[href="/users/new"]')).to be_present
     end

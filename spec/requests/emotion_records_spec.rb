@@ -49,9 +49,15 @@ RSpec.describe "Emotion input", type: :request do
     expect(controller_scope.name).to eq("form")
     expect(controller_scope["action"]).to eq(emotion_records_path)
     expect(controller_scope["method"]).to eq("post")
-    expect(controller_scope.at_css('textarea[name="emotion_record[memo]"][data-emotion-input-target="memo"]')).to be_present
-    expect(controller_scope.at_css('input[name="emotion_record[position_x]"][data-emotion-input-target="positionX"]')).to be_present
-    expect(controller_scope.at_css('input[name="emotion_record[position_y]"][data-emotion-input-target="positionY"]')).to be_present
+    expect(
+      controller_scope.at_css('textarea[name="emotion_record[memo]"][data-emotion-input-target="memo"]')
+    ).to be_present
+    expect(
+      controller_scope.at_css('input[name="emotion_record[position_x]"][data-emotion-input-target="positionX"]')
+    ).to be_present
+    expect(
+      controller_scope.at_css('input[name="emotion_record[position_y]"][data-emotion-input-target="positionY"]')
+    ).to be_present
     expect(controller_scope.at_css('input[name="emotion_record[strength]"]')["value"]).to eq("50")
     expect(controller_scope.at_css('output[data-emotion-input-target="strengthValue"]').text).to eq("50")
     expect(controller_scope.at_css('input[name="emotion_record[afterglow]"]')["value"]).to eq("50")
@@ -60,7 +66,9 @@ RSpec.describe "Emotion input", type: :request do
     expect(confirmation_button["type"]).to eq("button")
     expect(confirmation_button["disabled"]).to eq("")
     expect(dialog).to be_present
-    expect(dialog.at_css('input[type="time"][name="emotion_record[felt_at]"][data-emotion-input-target="feltAt"]')).to be_present
+    expect(
+      dialog.at_css('input[type="time"][name="emotion_record[felt_at]"][data-emotion-input-target="feltAt"]')
+    ).to be_present
     expect(dialog.at_css('button[type="button"][data-action="emotion-input#back"]')&.text&.strip).to eq("戻る")
     expect(dialog.at_css('button[type="submit"]')&.text&.strip).to eq("この場所に残す")
   end

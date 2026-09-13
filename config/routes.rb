@@ -21,6 +21,6 @@ Rails.application.routes.draw do
   get "calendar" => "calendars#show", as: :calendar
   get "mypage" => "mypages#show", as: :mypage
 
-  resources :users, only: [:new, :create]
-  resources :emotion_records, only: [:new, :create]
+  resources :users, only: %i[new create]
+  resources :emotion_records, only: %i[new create]
 end

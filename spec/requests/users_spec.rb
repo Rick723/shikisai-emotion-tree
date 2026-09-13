@@ -16,11 +16,11 @@ RSpec.describe "Signup", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body.at_css('form[action="/users"][method="post"]')).to be_present
-      expect(response.parsed_body.css('input[name^="user["]').map { |field| field["name"] }).to eq(
+      expect(response.parsed_body.css('input[name^="user["]').pluck("name")).to eq(
         ["user[name]", "user[email]", "user[password]", "user[password_confirmation]"]
       )
-      expect(response.parsed_body.css('input[type="password"]').map { |field| field["autocomplete"] }).to eq(
-        ["new-password", "new-password"]
+      expect(response.parsed_body.css('input[type="password"]').pluck("autocomplete")).to eq(
+        %w[new-password new-password]
       )
       expect(response.parsed_body.at_css('input[type="submit"][disabled]')).to be_nil
       expect(response.parsed_body.at_css('a[href="/terms"]')).to be_present
@@ -31,9 +31,9 @@ RSpec.describe "Signup", type: :request do
 
   describe "POST /users" do
     it "creates a user and redirects to login without signing them in" do
-      expect {
+      expect do
         post users_path, params: { user: valid_attributes }
-      }.to change(User, :count).by(1)
+      end.to change(User, :count).by(1)
 
       user = User.find_by!(email: valid_attributes[:email])
       expect(user.name).to eq(valid_attributes[:name])
@@ -58,9 +58,9 @@ RSpec.describe "Signup", type: :request do
         created_at: supplied_time
       )
 
-      expect {
+      expect do
         post users_path, params: { user: attributes }
-      }.to change(User, :count).by(1)
+      end.to change(User, :count).by(1)
 
       user = User.find_by!(email: valid_attributes[:email])
       expect(response).to redirect_to(login_path)
@@ -74,9 +74,9 @@ RSpec.describe "Signup", type: :request do
 
     shared_examples "a rejected signup" do
       it "renders validation errors with 422, retains name and email, and omits both passwords" do
-        expect {
+        expect do
           post users_path, params: { user: attributes }
-        }.not_to change(User, :count)
+        end.not_to change(User, :count)
 
         expect(response).to have_http_status(422)
         expect(response.parsed_body.at_css("h1").text).to eq("新規登録")
@@ -88,7 +88,7 @@ RSpec.describe "Signup", type: :request do
         response.parsed_body.css('input[type="password"]').each do |field|
           expect(field["value"]).to be_blank
         end
-        attributes.values_at(:password, :password_confirmation).select(&:present?).each do |password|
+        attributes.values_at(:password, :password_confirmation).compact_blank.each do |password|
           expect(response.body).not_to include(password)
         end
         expect(session[:user_id]).to be_nil
@@ -147,7 +147,7 @@ RSpec.describe "Signup", type: :request do
     end
 
     it "escapes retained input in the error response" do
-      attributes = valid_attributes.merge(name: '<script>x</script>', email: '"><script>x</script>')
+      attributes = valid_attributes.merge(name: "<script>x</script>", email: '"><script>x</script>')
 
       post users_path, params: { user: attributes }
 
