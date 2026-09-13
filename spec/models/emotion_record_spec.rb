@@ -11,7 +11,7 @@ RSpec.describe EmotionRecord, type: :model do
   end
 
   describe "validations" do
-    [:user, :emotion, :felt_on].each do |attribute|
+    %i[user emotion felt_on].each do |attribute|
       it "requires #{attribute}" do
         record = build(:emotion_record, attribute => nil)
 
@@ -20,7 +20,7 @@ RSpec.describe EmotionRecord, type: :model do
       end
     end
 
-    [:strength, :afterglow, :position_x, :position_y].each do |attribute|
+    %i[strength afterglow position_x position_y].each do |attribute|
       it "accepts the boundaries for #{attribute}" do
         [0, 100].each do |value|
           expect(build(:emotion_record, attribute => value)).to be_valid
@@ -28,7 +28,7 @@ RSpec.describe EmotionRecord, type: :model do
       end
 
       it "rejects missing, nonnumeric and out-of-range #{attribute}" do
-        values = [:strength, :afterglow].include?(attribute) ? [nil, "abc", -1, 101] : [nil, "abc", -0.01, 100.01]
+        values = %i[strength afterglow].include?(attribute) ? [nil, "abc", -1, 101] : [nil, "abc", -0.01, 100.01]
         values.each do |value|
           record = build(:emotion_record, attribute => value)
 
@@ -39,7 +39,7 @@ RSpec.describe EmotionRecord, type: :model do
     end
 
     it "requires integer strength and afterglow" do
-      [:strength, :afterglow].each do |attribute|
+      %i[strength afterglow].each do |attribute|
         record = build(:emotion_record, attribute => 50.5)
 
         expect(record).to be_invalid

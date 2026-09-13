@@ -1,0 +1,36 @@
+plugins:
+  - rubocop-rails
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.4
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
+Metrics/AbcSize:
+  Exclude:
+    - "db/migrate/20260908000002_create_emotion_records.rb"
+
+Metrics/MethodLength:
+  Exclude:
+    - "db/migrate/20260908000002_create_emotion_records.rb"
+
+Layout/EmptyLines:
+  Exclude:
+    - "config/ci.rb"
+
+Rails/BulkChangeTable:
+  Exclude:
+    - "db/migrate/20260908000000_create_emotions.rb"
+    - "db/migrate/20260908000001_create_users.rb"

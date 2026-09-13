@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :email, presence: true, length: { maximum: 255 },
-    format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true
+                    format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true
   validates :password, length: { minimum: 8 }, allow_nil: true
 
   private

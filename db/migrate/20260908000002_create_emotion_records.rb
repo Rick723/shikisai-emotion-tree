@@ -14,7 +14,7 @@ class CreateEmotionRecords < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :emotion_records, [:user_id, :felt_on]
+    add_index :emotion_records, %i[user_id felt_on]
     add_foreign_key :emotion_records, :users, on_delete: :cascade
     add_foreign_key :emotion_records, :emotions, on_delete: :restrict
 

@@ -1,6 +1,5 @@
 class MypagesController < ApplicationController
   before_action :require_login, only: :show
 
-  def show
-  end
+  def show; end
 end

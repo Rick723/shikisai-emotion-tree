@@ -6,10 +6,10 @@ class TreesController < ApplicationController
     @display_date = display_date(current_date)
     @is_today = @display_date == current_date
     @emotion_records = current_user.emotion_records
-      .where(felt_on: @display_date)
-      .includes(:emotion)
-      .order(:id)
-      .load
+                                   .where(felt_on: @display_date)
+                                   .includes(:emotion)
+                                   .order(:id)
+                                   .load
     @emotions = Emotion.order(:display_order)
   end
 
