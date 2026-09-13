@@ -26,10 +26,6 @@ Metrics/MethodLength:
   Exclude:
     - "db/migrate/20260908000002_create_emotion_records.rb"
 
-Layout/EmptyLines:
-  Exclude:
-    - "config/ci.rb"
-
 Rails/BulkChangeTable:
   Exclude:
     - "db/migrate/20260908000000_create_emotions.rb"
