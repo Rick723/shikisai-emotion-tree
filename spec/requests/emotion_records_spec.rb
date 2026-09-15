@@ -73,6 +73,25 @@ RSpec.describe "Emotion input", type: :request do
     expect(dialog.at_css('button[type="submit"]')&.text&.strip).to eq("この場所に残す")
   end
 
+  it "limits position selection to the canopy geometry in the full tree coordinate system" do
+    get new_emotion_record_path
+
+    tree = response.parsed_body.at_css('.tree-visual__layers[data-emotion-input-target="tree"]')
+    hit_area = tree.at_css('svg.emotion-form-page__hit-area[viewBox="0 0 1254 1254"]')
+    canopy = hit_area.at_css('[data-emotion-hit-area="canopy"]')
+
+    expect(tree["data-action"]).to be_nil
+    expect(hit_area["preserveAspectRatio"]).to eq("xMidYMid meet")
+    expect(canopy["data-action"]).to eq("pointerup->emotion-input#selectPosition")
+    expect(canopy["href"]).to end_with("#leaf-canopy")
+    expect(
+      response.parsed_body.at_css('input[name="emotion_record[position_x]"][data-emotion-input-target="positionX"]')
+    ).to be_present
+    expect(
+      response.parsed_body.at_css('input[name="emotion_record[position_y]"][data-emotion-input-target="positionY"]')
+    ).to be_present
+  end
+
   it "saves the current user's emotion record for today and redirects to the tree" do
     emotion = Emotion.order(:display_order).first
 

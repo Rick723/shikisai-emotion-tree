@@ -31,13 +31,26 @@
 }
 
 .emotion-form-page__tree {
-  cursor: crosshair;
   touch-action: manipulation;
   user-select: none;
 }
 
 .emotion-form-page__tree .tree-visual__base {
   pointer-events: none;
+}
+
+.emotion-form-page__hit-area {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.emotion-form-page__hit-canopy {
+  fill-opacity: 0;
+  pointer-events: fill;
+  cursor: crosshair;
 }
 
 .emotion-form-page__preview {
