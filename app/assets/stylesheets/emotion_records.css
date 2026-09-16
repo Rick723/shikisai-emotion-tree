@@ -63,7 +63,7 @@
     transparent 100%
   );
   opacity: var(--preview-opacity);
-  mask: url("shikisai_leaf_mask.svg") center / 100% 100% no-repeat;
+  mask: url("shikisai_leaf_color_mask.svg") center / 100% 100% no-repeat;
 }
 
 .emotion-form {
