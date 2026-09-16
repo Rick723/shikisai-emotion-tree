@@ -79,7 +79,6 @@
 
 .tree-visual__base {
   width: 100%;
-  filter: contrast(1.05);
 }
 
 .tree-visual__color {

@@ -32,7 +32,7 @@
           <% @existing_emotion_records.each do |record| %>
             <span
               class="tree-visual__color"
-              style="--tree-color: <%= record.emotion.color_code %>; --tree-x: <%= record.position_x %>%; --tree-y: <%= record.position_y %>%; --tree-radius: <%= (10 + record.strength * 0.2).round(1) %>%; --tree-opacity: <%= (0.2 + record.afterglow * 0.008).round(3) %>"
+              style="--tree-color: <%= record.emotion.color_code %>; --tree-x: <%= record.position_x %>%; --tree-y: <%= record.position_y %>%; --tree-radius: <%= (10 + record.strength * 0.2).round(1) %>%; --tree-opacity: <%= (0.4 + record.afterglow * 0.006).round(3) %>"
               aria-hidden="true"
             ></span>
           <% end %>

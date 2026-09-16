@@ -127,7 +127,7 @@ RSpec.describe "Emotion input", type: :request do
     expect(style).to include("--tree-x: 38.25%")
     expect(style).to include("--tree-y: 41.75%")
     expect(style).to include("--tree-radius: 24.4%")
-    expect(style).to include("--tree-opacity: 0.712")
+    expect(style).to include("--tree-opacity: 0.784")
     expect(tree.element_children.pluck("class")).to eq(
       %w[tree-visual__base tree-visual__color emotion-form-page__preview emotion-form-page__hit-area]
     )
