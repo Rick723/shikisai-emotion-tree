@@ -62,7 +62,7 @@
     var(--preview-color) 15%,
     transparent 100%
   );
-  opacity: var(--preview-opacity);
+  opacity: calc(var(--preview-opacity) * 0.65);
   mask: url("shikisai_leaf_color_mask.svg") center / 100% 100% no-repeat;
 }
 
