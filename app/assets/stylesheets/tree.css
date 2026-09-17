@@ -90,8 +90,8 @@
     var(--tree-color) 15%,
     transparent 100%
   );
-  opacity: var(--tree-opacity);
-  mask: url("tree_base.png") center / 100% 100% no-repeat;
+  opacity: calc(var(--tree-opacity) * 0.50);
+  mask: url("shikisai_leaf_color_mask.png") center / 100% 100% no-repeat;
 }
 
 .tree-visual__empty {

@@ -73,6 +73,66 @@ RSpec.describe "Emotion input", type: :request do
     expect(dialog.at_css('button[type="submit"]')&.text&.strip).to eq("この場所に残す")
   end
 
+  it "limits position selection to the canopy geometry in the full tree coordinate system" do
+    get new_emotion_record_path
+
+    tree = response.parsed_body.at_css('.tree-visual__layers[data-emotion-input-target="tree"]')
+    hit_area = tree.at_css('svg.emotion-form-page__hit-area[viewBox="0 0 1254 1254"]')
+    canopy = hit_area.at_css('[data-emotion-hit-area="canopy"]')
+
+    expect(tree["data-action"]).to be_nil
+    expect(hit_area["preserveAspectRatio"]).to eq("xMidYMid meet")
+    expect(canopy["data-action"]).to eq("pointerup->emotion-input#selectPosition")
+    expect(canopy["href"]).to end_with("#leaf-canopy")
+    expect(
+      response.parsed_body.at_css('input[name="emotion_record[position_x]"][data-emotion-input-target="positionX"]')
+    ).to be_present
+    expect(
+      response.parsed_body.at_css('input[name="emotion_record[position_y]"][data-emotion-input-target="positionY"]')
+    ).to be_present
+  end
+
+  it "fetches only today's stored records for the current user in id order with emotions preloaded" do
+    first = create(:emotion_record, user: user, emotion: Emotion.find_by!(name: "happy"), felt_on: Date.current)
+    second = create(:emotion_record, user: user, emotion: Emotion.find_by!(name: "sad"), felt_on: Date.current)
+    create(:emotion_record, user: user, emotion: Emotion.find_by!(name: "fun"), felt_on: Date.current - 1.day)
+    create(:emotion_record, emotion: Emotion.find_by!(name: "grateful"), felt_on: Date.current)
+
+    get new_emotion_record_path
+
+    records = controller.view_assigns.fetch("existing_emotion_records")
+    expect(records).to be_loaded
+    expect(records.map(&:id)).to eq([first.id, second.id])
+    expect(records.all? { |record| record.association(:emotion).loaded? }).to be(true)
+    expect(response.parsed_body.css(".tree-visual__color").size).to eq(2)
+  end
+
+  it "draws a stored record like the tree between the base and the current preview" do
+    create(
+      :emotion_record,
+      user: user,
+      emotion: Emotion.find_by!(name: "grateful"),
+      felt_on: Date.current,
+      position_x: 38.25,
+      position_y: 41.75,
+      strength: 72,
+      afterglow: 64
+    )
+
+    get new_emotion_record_path
+
+    tree = response.parsed_body.at_css(".tree-visual__layers")
+    style = tree.at_css(".tree-visual__color")["style"]
+    expect(style).to include("--tree-color: #BDE7C5")
+    expect(style).to include("--tree-x: 38.25%")
+    expect(style).to include("--tree-y: 41.75%")
+    expect(style).to include("--tree-radius: 24.4%")
+    expect(style).to include("--tree-opacity: 0.784")
+    expect(tree.element_children.pluck("class")).to eq(
+      %w[tree-visual__base tree-visual__color emotion-form-page__preview emotion-form-page__hit-area]
+    )
+  end
+
   it "saves the current user's emotion record for today and redirects to the tree" do
     emotion = Emotion.order(:display_order).first
 
@@ -129,6 +189,16 @@ RSpec.describe "Emotion input", type: :request do
 
   it "renders validation errors with 422 and retains the submitted values" do
     emotion = Emotion.order(:display_order).first
+    existing_record = create(
+      :emotion_record,
+      user: user,
+      emotion: Emotion.find_by!(name: "grateful"),
+      felt_on: Date.current,
+      position_x: 12.5,
+      position_y: 34.5,
+      strength: 20,
+      afterglow: 30
+    )
     attributes = {
       emotion_id: emotion.id,
       strength: 72,
@@ -157,6 +227,11 @@ RSpec.describe "Emotion input", type: :request do
     expect(form.at_css('input[name="emotion_record[position_y]"]')["value"]).to eq("41.75")
     expect(form.at_css('input[name="emotion_record[felt_at]"]')["value"]).to start_with("13:45")
     expect(form.at_css('textarea[name="emotion_record[memo]"]').text).to eq(attributes[:memo])
+    colors = form.css(".tree-visual__color")
+    expect(colors.size).to eq(1)
+    expect(colors.first["style"]).to include("--tree-color: #{existing_record.emotion.color_code}")
+    expect(colors.first["style"]).to include("--tree-x: 12.5%")
+    expect(colors.first["style"]).not_to include("--tree-x: 38.25%")
   end
 
   it "ignores submitted user_id and felt_on values" do

@@ -71,7 +71,7 @@ export default class extends Controller {
     style.setProperty("--preview-color", emotion.dataset.emotionColor)
     // Simple monotonic ranges keep even the weakest emotion visible.
     style.setProperty("--preview-radius", `${10 + Number(this.strengthTarget.value) * 0.2}%`)
-    style.setProperty("--preview-opacity", 0.2 + Number(this.afterglowTarget.value) * 0.008)
+    style.setProperty("--preview-opacity", 0.4 + Number(this.afterglowTarget.value) * 0.006)
   }
 
   openConfirmation() {

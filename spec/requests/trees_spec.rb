@@ -113,7 +113,7 @@ RSpec.describe "Tree", type: :request do
     expect(style).to include("--tree-x: 38.25%")
     expect(style).to include("--tree-y: 41.75%")
     expect(style).to include("--tree-radius: 24.4%")
-    expect(style).to include("--tree-opacity: 0.712")
+    expect(style).to include("--tree-opacity: 0.784")
   end
 
   it "shows the base tree, guidance, and input link when today has no records" do
