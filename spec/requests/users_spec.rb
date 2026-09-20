@@ -118,7 +118,7 @@ RSpec.describe "Signup", type: :request do
 
     context "with an email already in use" do
       let(:attributes) { valid_attributes }
-      let(:error_message) { "メールアドレス はすでに使用されています" }
+      let(:error_message) { "メールアドレス は使用できません" }
 
       before { create(:user, email: valid_attributes[:email]) }
 
