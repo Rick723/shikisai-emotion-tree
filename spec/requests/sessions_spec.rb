@@ -6,15 +6,50 @@ RSpec.describe "Login", type: :request do
   let(:failure_message) { "メールアドレスまたはパスワードが正しくありません。" }
 
   describe "GET /login" do
+    let(:diagnostic_headers) do
+      %w[
+        X-Shikisai-IP-Diagnostic-Forwarded-For
+        X-Shikisai-IP-Diagnostic-Real-IP
+        X-Shikisai-IP-Diagnostic-Remote-IP
+        X-Shikisai-IP-Diagnostic-Request-ID
+      ]
+    end
+
     it "renders a login form and preserves the signup link" do
-      get login_path
+      get login_path, headers: {
+        "X-Forwarded-For" => "203.0.113.10",
+        "X-Real-IP" => "192.0.2.30"
+      }
 
       expect(response).to have_http_status(:ok)
+      expect(response.headers.keys.grep(/\Ax-shikisai-ip-diagnostic-/i)).to be_empty
       expect(response.parsed_body.at_css('form[action="/login"][method="post"]')).to be_present
       expect(response.parsed_body.at_css('input[name="session[email]"]')["autocomplete"]).to eq("email")
       expect(response.parsed_body.at_css('input[name="session[password]"]')["autocomplete"]).to eq("current-password")
       expect(response.parsed_body.at_css('input[type="submit"][disabled]')).to be_nil
       expect(response.parsed_body.at_css('a[href="/users/new"]')).to be_present
+    end
+
+    it "returns only the four diagnostic values when the diagnostic header is 1" do
+      get login_path, headers: {
+        "X-Shikisai-IP-Diagnostic" => "1",
+        "X-Forwarded-For" => "203.0.113.10, 198.51.100.20",
+        "X-Real-IP" => "192.0.2.30"
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.headers["X-Shikisai-IP-Diagnostic-Forwarded-For"]).to eq("203.0.113.10, 198.51.100.20")
+      expect(response.headers["X-Shikisai-IP-Diagnostic-Real-IP"]).to eq("192.0.2.30")
+      expect(response.headers["X-Shikisai-IP-Diagnostic-Remote-IP"]).to eq(request.remote_ip)
+      expect(response.headers["X-Shikisai-IP-Diagnostic-Request-ID"]).to eq(request.request_id)
+      expect(response.headers.keys.grep(/\Ax-shikisai-ip-diagnostic-/i).map(&:downcase)).to match_array(diagnostic_headers.map(&:downcase))
+      expect(response.parsed_body.at_css("h1").text).to eq("ログイン")
+    end
+
+    it "does not return diagnostic values for other header values" do
+      get login_path, headers: { "X-Shikisai-IP-Diagnostic" => "0" }
+
+      expect(response.headers.keys.grep(/\Ax-shikisai-ip-diagnostic-/i)).to be_empty
     end
   end
 
