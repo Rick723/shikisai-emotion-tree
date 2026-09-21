@@ -42,7 +42,8 @@ RSpec.describe "Login", type: :request do
       expect(response.headers["X-Shikisai-IP-Diagnostic-Real-IP"]).to eq("192.0.2.30")
       expect(response.headers["X-Shikisai-IP-Diagnostic-Remote-IP"]).to eq(request.remote_ip)
       expect(response.headers["X-Shikisai-IP-Diagnostic-Request-ID"]).to eq(request.request_id)
-      expect(response.headers.keys.grep(/\Ax-shikisai-ip-diagnostic-/i).map(&:downcase)).to match_array(diagnostic_headers.map(&:downcase))
+      diagnostic_header_names = response.headers.keys.grep(/\Ax-shikisai-ip-diagnostic-/i).map(&:downcase)
+      expect(diagnostic_header_names).to match_array(diagnostic_headers.map(&:downcase))
       expect(response.parsed_body.at_css("h1").text).to eq("ログイン")
     end
 
