@@ -1,7 +1,5 @@
 class SessionsController < ApplicationController
-  def new
-    add_ip_diagnostic_headers if request.headers["X-Shikisai-IP-Diagnostic"] == "1"
-  end
+  def new; end
 
   def create
     credentials = params.expect(session: %i[email password])
@@ -22,16 +20,6 @@ class SessionsController < ApplicationController
   end
 
   private
-
-  def add_ip_diagnostic_headers
-    headers = {
-      "X-Shikisai-IP-Diagnostic-Forwarded-For" => request.get_header("HTTP_X_FORWARDED_FOR").to_s,
-      "X-Shikisai-IP-Diagnostic-Real-IP" => request.get_header("HTTP_X_REAL_IP").to_s,
-      "X-Shikisai-IP-Diagnostic-Remote-IP" => request.remote_ip,
-      "X-Shikisai-IP-Diagnostic-Request-ID" => request.request_id
-    }
-    headers.each { |name, value| response.set_header(name, value) }
-  end
 
   def start_session(user)
     reset_session
