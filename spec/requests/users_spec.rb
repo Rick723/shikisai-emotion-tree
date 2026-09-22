@@ -30,6 +30,25 @@ RSpec.describe "Signup", type: :request do
   end
 
   describe "POST /users" do
+    it "limits the eleventh request per X-Real-IP without limiting GET or another client" do
+      headers = { "X-Real-IP" => "198.51.100.10" }
+      params = { user: valid_attributes.merge(name: "") }
+
+      10.times do
+        post users_path, params: params, headers: headers
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      post users_path, params: params, headers: headers
+      expect(response).to have_http_status(:too_many_requests)
+
+      get new_user_path, headers: headers
+      expect(response).to have_http_status(:ok)
+
+      post users_path, params: params, headers: { "X-Real-IP" => "198.51.100.11" }
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it "creates a user and redirects to login without signing them in" do
       expect do
         post users_path, params: { user: valid_attributes }

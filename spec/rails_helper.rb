@@ -14,6 +14,7 @@ end
 RSpec.configure do |config|
   config.fixture_paths = [Rails.root.join("spec/fixtures")]
   config.use_transactional_fixtures = true
+  config.before(:each, type: :request) { ActionController::Base.cache_store.clear }
   config.filter_rails_from_backtrace!
 
   # factory_bot_rails loads spec/factories automatically.
