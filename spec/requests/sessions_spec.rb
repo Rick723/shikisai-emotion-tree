@@ -19,6 +19,25 @@ RSpec.describe "Login", type: :request do
   end
 
   describe "POST /login" do
+    it "limits the eleventh request per X-Real-IP without limiting GET or another client" do
+      headers = { "X-Real-IP" => "192.0.2.10" }
+      params = { session: { email: "unregistered@example.com", password: "incorrect-password123" } }
+
+      10.times do
+        post login_path, params: params, headers: headers
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      post login_path, params: params, headers: headers
+      expect(response).to have_http_status(:too_many_requests)
+
+      get login_path, headers: headers
+      expect(response).to have_http_status(:ok)
+
+      post login_path, params: params, headers: { "X-Real-IP" => "192.0.2.11" }
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it "authenticates the user, stores only their ID, and redirects to the tree" do
       post login_path, params: { session: { email: user.email, password: password } }
 

@@ -1,4 +1,9 @@
 class SessionsController < ApplicationController
+  rate_limit to: 10,
+             within: 3.minutes,
+             only: :create,
+             by: -> { request.get_header("HTTP_X_REAL_IP").presence || request.remote_ip }
+
   def new; end
 
   def create
