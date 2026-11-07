@@ -1,5 +1,5 @@
 class EmotionRecordsController < ApplicationController
-  before_action :require_login, only: %i[new create]
+  before_action :require_login, only: %i[new create show]
 
   def new
     @emotion_record = current_user.emotion_records.new
@@ -17,6 +17,10 @@ class EmotionRecordsController < ApplicationController
       prepare_form_context
       render :new, status: :unprocessable_content
     end
+  end
+
+  def show
+    @emotion_record = current_user.emotion_records.find(params[:id])
   end
 
   private
