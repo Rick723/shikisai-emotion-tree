@@ -23,11 +23,11 @@
     感じた時刻： <%= @emotion_record.felt_at.strftime("%H:%M") %>
   </p>
 <% else %>
-  <p>記録なし</p>
+  <p class="emotion-detail_time">記録なし</p>
 <% end %>
 
 <% if @emotion_record.memo.present? %>
   <p>メモ： <%= @emotion_record.memo %></p>
 <% else %>
-  <p>メモなし</p>
+  <p class="emotion-detail_memo">メモなし</p>
 <% end %>

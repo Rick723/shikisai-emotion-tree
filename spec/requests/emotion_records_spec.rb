@@ -314,4 +314,28 @@ RSpec.describe "Emotion input", type: :request do
     expect(choices.last.at_css(".tree-legend__swatch")["style"]).to eq("background-color: #123456")
     expect(choices.last.text.strip).to eq("その他")
   end
+
+  describe "GET /emotion_records/:id" do
+    let(:emotion_record) { create(:emotion_record, user: user) }
+
+    #　正常系
+    context "正常系" do
+      it "ログイン中のユーザーが自分の感情記録を閲覧できる" do
+        get emotion_record_path(emotion_record)
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "時刻とメモが未入力でも閲覧できる" do
+        record = create(:emotion_record, user: user, felt_at: nil, memo: nil)
+
+        get emotion_record_path(record)
+        page = response.parsed_body
+
+        expect(response).to have_http_status(:ok)
+        expect(page.at_css(".emotion-detail_time").text.strip).to eq("記録なし")
+        expect(page.at_css(".emotion-detail_memo").text.strip).to eq("メモなし")
+      end
+    end
+  end
 end
