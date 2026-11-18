@@ -337,5 +337,31 @@ RSpec.describe "Emotion input", type: :request do
         expect(page.at_css(".emotion-detail_memo").text.strip).to eq("メモなし")
       end
     end
+    context "異常系" do
+      context "ログイン済み" do
+        let(:other_user) { create(:user)}
+
+        let(:other_record) {
+          create(:emotion_record, user: other_user)
+        }
+        it "他ユーザーの記録にアクセスできない" do
+          get emotion_record_path(other_record)
+
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "記録が存在せず、404エラーが起きる" do
+        end
+      end
+
+      context "未ログイン時" do
+        before do
+          # ログアウト処理
+        end
+
+        it "未ログイン時は詳細記録にアクセスできず、303エラーが起きる" do
+        end
+      end
+    end
   end
 end
