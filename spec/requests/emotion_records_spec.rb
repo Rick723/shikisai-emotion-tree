@@ -316,14 +316,32 @@ RSpec.describe "Emotion input", type: :request do
   end
 
   describe "GET /emotion_records/:id" do
-    let(:emotion_record) { create(:emotion_record, user: user) }
-
+    let(:emotion_record) {
+      create(
+        :emotion_record,
+         user: user,
+         emotion: Emotion.find_by!(name: "happy"),
+         strength: 72,
+         afterglow: 64,
+         felt_on: Date.new(2026, 9, 10),
+         felt_at: "13:45",
+         memo: "穏やかな気持ち"
+      )
+    }
     #　正常系
     context "正常系" do
       it "ログイン中のユーザーが自分の感情記録を閲覧できる" do
         get emotion_record_path(emotion_record)
+        page = response.parsed_body
 
         expect(response).to have_http_status(:ok)
+        expect(page.at_css(".emotion-detail_emotion").text.squish).to eq("感情の種類： うれしい")
+        expect(page.at_css(".emotion-detail_strength").text.squish).to eq("強さ： 72")
+        expect(page.at_css(".emotion-detail_afterglow").text.squish).to eq("余韻： 64")
+        expect(page.at_css(".emotion-detail_date").text.squish).to eq("記録日： 2026-09-10")
+        expect(page.at_css(".emotion-detail_time").text.squish).to eq("感じた時刻： 13:45")
+        expect(page.at_css(".emotion-detail_memo").text.squish).to eq("メモ： 穏やかな気持ち")
+
       end
 
       it "時刻とメモが未入力でも閲覧できる" do
@@ -351,15 +369,22 @@ RSpec.describe "Emotion input", type: :request do
         end
 
         it "記録が存在せず、404エラーが起きる" do
+          get emotion_record_path(999_999)
+
+          expect(response).to have_http_status(:not_found)
         end
       end
 
       context "未ログイン時" do
         before do
-          # ログアウト処理
+          delete logout_path
         end
 
         it "未ログイン時は詳細記録にアクセスできず、303エラーが起きる" do
+          get emotion_record_path(emotion_record)
+
+          expect(response).to redirect_to(login_path)
+          expect(response).to have_http_status(:see_other)
         end
       end
     end
