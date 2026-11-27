@@ -314,4 +314,105 @@ RSpec.describe "Emotion input", type: :request do
     expect(choices.last.at_css(".tree-legend__swatch")["style"]).to eq("background-color: #123456")
     expect(choices.last.text.strip).to eq("その他")
   end
+
+  describe "GET /emotion_records/:id" do
+    let(:emotion_record) do
+      create(
+        :emotion_record,
+        user: user,
+        emotion: Emotion.find_by!(name: "happy"),
+        strength: 72,
+        afterglow: 64,
+        felt_on: Date.new(2026, 9, 10),
+        felt_at: "13:45",
+        memo: "穏やかな気持ち"
+      )
+    end
+    # 　正常系
+    context "正常系" do
+      it "ログイン中のユーザーが自分の感情記録を閲覧できる" do
+        create(
+          :emotion_record,
+          user: user,
+          emotion: Emotion.find_by!(name: "sad"),
+          strength: 30,
+          afterglow: 20,
+          felt_on: Date.new(2026, 9, 10),
+          felt_at: "10:20",
+          memo: "悲しい気持ち"
+        )
+        get emotion_record_path(emotion_record)
+        page = response.parsed_body
+
+        expect(response).to have_http_status(:ok)
+        expect(page.at_css(".emotion-detail_emotion").text.squish).to eq("感情の種類： うれしい")
+        expect(page.at_css(".emotion-detail_strength").text.squish).to eq("強さ： 72")
+        expect(page.at_css(".emotion-detail_afterglow").text.squish).to eq("余韻： 64")
+        expect(page.at_css(".emotion-detail_date").text.squish).to eq("記録日： 2026-09-10")
+        expect(page.at_css(".emotion-detail_time").text.squish).to eq("感じた時刻： 13:45")
+        expect(page.at_css(".emotion-detail_memo").text.squish).to eq("メモ： 穏やかな気持ち")
+      end
+
+      it "時刻とメモが未入力でも閲覧できる" do
+        record = create(:emotion_record, user: user, felt_at: nil, memo: nil)
+
+        get emotion_record_path(record)
+        page = response.parsed_body
+
+        expect(response).to have_http_status(:ok)
+        expect(page.at_css(".emotion-detail_time").text.strip).to eq("記録なし")
+        expect(page.at_css(".emotion-detail_memo").text.strip).to eq("メモなし")
+      end
+
+      it "メモに含まれるHTMLタグがエスケープされる" do
+        record = create(:emotion_record, user: user, memo: "<em>テスト</em>")
+
+        get emotion_record_path(record)
+        page = response.parsed_body
+        memo = page.at_css(".emotion-detail_memo")
+
+        expect(response).to have_http_status(:ok)
+        expect(memo.text.strip).to eq("メモ： <em>テスト</em>")
+        expect(memo.at_css("em")).to be_nil
+      end
+    end
+    context "異常系" do
+      context "ログイン済み" do
+        let(:other_user) { create(:user) }
+
+        let(:other_record) do
+          create(
+            :emotion_record,
+            user: other_user,
+            memo: SecureRandom.hex(16)
+          )
+        end
+        it "他ユーザーの記録にアクセスできない" do
+          get emotion_record_path(other_record)
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).not_to include(other_record.memo)
+        end
+
+        it "記録が存在せず、404エラーが起きる" do
+          get emotion_record_path(999_999)
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
+      context "未ログイン時" do
+        before do
+          delete logout_path
+        end
+
+        it "未ログイン時は詳細記録にアクセスできず、303エラーが起きる" do
+          get emotion_record_path(emotion_record)
+
+          expect(response).to redirect_to(login_path)
+          expect(response).to have_http_status(:see_other)
+        end
+      end
+    end
+  end
 end

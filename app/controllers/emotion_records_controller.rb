@@ -1,5 +1,9 @@
 class EmotionRecordsController < ApplicationController
-  before_action :require_login, only: %i[new create]
+  before_action :require_login, only: %i[new create show]
+
+  def show
+    @emotion_record = current_user.emotion_records.find(params.expect(:id))
+  end
 
   def new
     @emotion_record = current_user.emotion_records.new

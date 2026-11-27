@@ -1,0 +1,33 @@
+<% content_for :title, "感情の詳細 | Shikisai ～感情の木～" %>
+
+<h3>感情詳細</h3>
+
+<p class="emotion-detail_emotion">
+  感情の種類： <%= t("emotions.#{@emotion_record.emotion.name}") %>
+</p>
+
+<p class="emotion-detail_strength">
+  強さ： <%= @emotion_record.strength %>
+</p>
+
+<p class="emotion-detail_afterglow">
+  余韻： <%= @emotion_record.afterglow %>
+</p>
+
+<p class="emotion-detail_date">
+  記録日： <%= @emotion_record.felt_on %>
+</p>
+
+<% if @emotion_record.felt_at.present? %>
+  <p class="emotion-detail_time">
+    感じた時刻： <%= @emotion_record.felt_at.strftime("%H:%M") %>
+  </p>
+<% else %>
+  <p class="emotion-detail_time">記録なし</p>
+<% end %>
+
+<% if @emotion_record.memo.present? %>
+  <p class="emotion-detail_memo">メモ： <%= @emotion_record.memo %></p>
+<% else %>
+  <p class="emotion-detail_memo">メモなし</p>
+<% end %>
