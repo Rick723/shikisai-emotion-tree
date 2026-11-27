@@ -1,6 +1,6 @@
 # RSpec / FactoryBot
 
-既存のDocker環境（Ruby 3.4.10 / Rails 8.1.3.1 / MySQL 8.4.11）を使用します。
+既存のDocker環境（Ruby 3.4.13 / Rails 8.1.4.1 / MySQL 8.4.11）を使用します。
 `.env`の準備など、開発環境の初期設定はルートのREADMEを参照してください。
 
 ```sh
